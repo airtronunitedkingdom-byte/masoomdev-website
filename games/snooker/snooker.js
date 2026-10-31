@@ -14,7 +14,7 @@ function pocketCapture(b,i){const [px,py]=pockets[i],dx=b.x-px,dy=b.y-py,d=Math.
 function cushionBounce(b){const mid=Math.abs(b.x-500)<35;if(b.x<L+rad){b.x=L+rad;b.vx=Math.abs(b.vx)*.88}if(b.x>R-rad){b.x=R-rad;b.vx=-Math.abs(b.vx)*.88}if(b.y<T+rad&&!mid){b.y=T+rad;b.vy=Math.abs(b.vy)*.88}if(b.y>B-rad&&!mid){b.y=B-rad;b.vy=-Math.abs(b.vy)*.88}}
 
 function ball(type,x,y){return{type,x,y,vx:0,vy:0,spinX:0,spinY:0,alive:true,home:type==="red"||type==="white"?null:[x,y]}}
-function reset(){clearTimeout(aiTimer);lastFrameTime=0;cancelAnimationFrame(raf);reds=+$("reds").value;balls=[];shotHistory=[];scores=[0,0];player=0;phase="red";clearIndex=0;moving=false;shot=null;placing=false;won=false;aim={x:1,y:0};
+function reset(){clearGameNotice();clearTimeout(aiTimer);lastFrameTime=0;cancelAnimationFrame(raf);reds=+$("reds").value;balls=[];shotHistory=[];scores=[0,0];player=0;phase="red";clearIndex=0;moving=false;shot=null;placing=false;won=false;aim={x:1,y:0};
  balls.push(ball("white",L+155,315));
  const n=reds===6?3:4;let count=0;for(let row=0;row<n;row++)for(let k=0;k<=row;k++){if(count++>=reds)break;balls.push(ball("red",740+row*20,260-row*11+k*22))}
  for(const type of order)balls.push(ball(type,...spots[type]));
@@ -30,7 +30,7 @@ function resPot(b){const p=nearestFree(...spots[b.type],b);b.x=p[0];b.y=p[1];b.v
 function switchTurn(){player=1-player;queueComputer()}
 function renderHistory(){const el=$("history");if(el)el.innerHTML=shotHistory.slice(-6).reverse().map(h=>"<li>"+h+"</li>").join("")}
 function recordShot(label){shotHistory.push("P"+(shot.player+1)+": "+label);renderHistory()}
-function foul(reason){recordShot("Foul — "+reason);scores[1-player]+=Math.max(4,...(shot.potted.map(t=>values[t]||0)),values[shot.first]||0);switchTurn();phase=redCount()?"red":phase==="clear"?"clear":"color";message("Foul: "+reason+". Opponent awarded points.")}
+function foul(reason){showGameNotice("foul","FOUL! "+reason);recordShot("Foul — "+reason);scores[1-player]+=Math.max(4,...(shot.potted.map(t=>values[t]||0)),values[shot.first]||0);switchTurn();phase=redCount()?"red":phase==="clear"?"clear":"color";message("Foul: "+reason+". Opponent awarded points.")}
 function settle(){moving=false;const white=cue(),p=shot.potted,first=shot.first,required=shot.required;
  const illegalFirst=!first||(required==="red"?first!=="red":required==="color"?first==="red"||first==="white":first!==required);
  const illegalPots=p.some(t=>t==="white"||(required==="red"?t!=="red":required==="color"?t==="red":t!==required));
@@ -46,7 +46,7 @@ function settle(){moving=false;const white=cue(),p=shot.potted,first=shot.first,
   if(phase==="clear"&&order.indexOf(b.type)<clearIndex)continue;
   resPot(b)}
  if(!white.alive){placing=true;message($("message").textContent+" Place the white ball inside the D.")}
- if(phase==="clear"&&clearIndex>=order.length){won=true;message("Frame over! "+(scores[0]===scores[1]?"Tie game.":"Player "+(scores[0]>scores[1]?1:2)+" wins!")+" Final "+scores.join("–"))}
+ if(phase==="clear"&&clearIndex>=order.length){won=true;const winner=scores[0]===scores[1]?-1:scores[0]>scores[1]?0:1;message("Frame over! "+(winner<0?"Tie game.":"Player "+(winner+1)+" wins!")+" Final "+scores.join("–"));if(winner<0)showGameNotice("win","FRAME DRAW!");else if($("mode").value==="pvc")showGameNotice(winner===0?"win":"lose",winner===0?"YOU WIN!":"YOU LOSE!");else showGameNotice("win","PLAYER "+(winner+1)+" WINS! • PLAYER "+(2-winner)+" LOSES!")}
  shot=null;resetShotControls();ui();draw();queueComputer()}
 function isComputerTurn(){return $("mode").value==="pvc"&&player===1&&!won}
 function queueComputer(){clearTimeout(aiTimer);if(!isComputerTurn()||moving||won)return;aiTimer=setTimeout(computerShot,850)}
@@ -115,6 +115,10 @@ function coords(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left
 function aimAt(p){const b=cue();const dx=p.x-b.x,dy=p.y-b.y,d=Math.hypot(dx,dy);if(d>4){aim={x:dx/d,y:dy/d};syncAimControls();draw()}}
 cv.addEventListener("pointerdown",e=>{if(moving||won||isComputerTurn())return;e.preventDefault();const p=coords(e);if(placing){if(p.x>L+rad&&p.x<L+195&&Math.hypot(p.x-(L+195),p.y-260)<=73){const pos=nearestFree(p.x,p.y,cue());Object.assign(cue(),{x:pos[0],y:pos[1],alive:true});placing=false;message("Cue ball placed. Aim and shoot.");ui();draw()}return}dragStart=p;aimAt(p);if(cv.setPointerCapture)cv.setPointerCapture(e.pointerId)});
 cv.addEventListener("pointermove",e=>{if(dragStart&&!moving&&!isComputerTurn())aimAt(coords(e))});cv.addEventListener("pointerup",e=>{if(dragStart&&!isComputerTurn()){aimAt(coords(e));dragStart=null}});cv.addEventListener("pointercancel",()=>dragStart=null);
+let noticeTimer=null;
+function clearGameNotice(){clearTimeout(noticeTimer);noticeTimer=null;const el=$("gameNotice");if(el)el.hidden=true}
+function noticeSound(kind){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume().catch(()=>{});const notes=kind==="win"?[[523,0,.12],[659,.13,.12],[784,.26,.22]]:kind==="lose"?[[392,0,.15],[311,.17,.18],[220,.36,.24]]:[[260,0,.11],[190,.14,.18]];for(const [freq,offset,duration] of notes){const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+offset;o.type=kind==="foul"?"square":"sine";o.frequency.setValueAtTime(freq,at);g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(kind==="foul"?.018:.035,at+.018);g.gain.exponentialRampToValueAtTime(.0001,at+duration);o.connect(g);g.connect(audio.destination);o.start(at);o.stop(at+duration+.02)}}catch{}}
+function showGameNotice(kind,label){clearGameNotice();const el=$("gameNotice");if(!el)return;el.dataset.kind=kind;$("gameNoticeIcon").textContent=kind==="win"?"🏆":kind==="lose"?"💔":"⚠️";$("gameNoticeText").textContent=label;el.hidden=false;noticeSound(kind);noticeTimer=setTimeout(()=>{el.hidden=true;noticeTimer=null},1000)}
 let audio;function beep(freq,duration){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=freq;g.gain.value=.025;o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration)}catch{}}
 function syncAimControls(){const angle=(Math.atan2(aim.y,aim.x)*180/Math.PI+360)%360;$("aimAngle").textContent=Math.round(angle)+"°";$("aimWheel").setAttribute("aria-valuenow",String(Math.round(angle)));$("aimWheel").querySelector(".wheel-marker").style.transform="rotate("+(angle+90)+"deg)";}
 function setAimAngle(degrees){if(moving||won||isComputerTurn())return;const a=degrees*Math.PI/180;aim={x:Math.cos(a),y:Math.sin(a)};syncAimControls();draw()}
