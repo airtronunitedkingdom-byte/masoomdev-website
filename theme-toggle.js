@@ -27,7 +27,7 @@
   document.head.appendChild(style);
   var stored;
   try { stored = localStorage.getItem(key); } catch (_) {}
-  var theme = stored === 'light' || stored === 'dark' ? stored : (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  var theme = stored === 'dark' ? 'dark' : 'light';
   function apply(next) {
     root.setAttribute('data-md-theme', next);
     var b = document.getElementById('md-theme-toggle');
