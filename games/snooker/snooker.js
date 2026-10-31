@@ -63,7 +63,49 @@ function draw(){const c=ctx;c.clearRect(0,0,W,H);const wood=c.createLinearGradie
  for(const [x,y] of pockets){c.fillStyle="#08110e";c.beginPath();c.arc(x,y,23,0,Math.PI*2);c.fill();c.strokeStyle="#d5b06a";c.lineWidth=4;c.stroke()}
  for(let i=0;i<8;i++){c.fillStyle="#e8d19a";c.fillRect(110+i*110,35,4,7);c.fillRect(110+i*110,479,4,7)}
  for(const b of balls){if(!b.alive)continue;const grad=c.createRadialGradient(b.x-4,b.y-5,1,b.x,b.y,rad);grad.addColorStop(0,"#fff9");grad.addColorStop(.3,colors[b.type]);grad.addColorStop(1,b.type==="white"?"#c1c9d1":"#171b24");c.fillStyle="#0005";c.beginPath();c.ellipse(b.x+3,b.y+5,rad,rad*.65,0,0,Math.PI*2);c.fill();c.fillStyle=grad;c.beginPath();c.arc(b.x,b.y,rad,0,Math.PI*2);c.fill()}
- const b=cue();if(b.alive&&!moving&&!won){let tx=b.x,ty=b.y,impact=null;for(let k=0;k<620;k++){tx+=aim.x*2;ty+=aim.y*2;if(tx<L+rad||tx>R-rad||ty<T+rad||ty>B-rad)break;const other=balls.find(o=>o.alive&&o!==b&&Math.hypot(o.x-tx,o.y-ty)<rad*2);if(other){impact={x:tx,y:ty};break}}if(guideOn&&impact){c.fillStyle="#ffffff55";c.beginPath();c.arc(impact.x,impact.y,rad,0,Math.PI*2);c.fill()}if(guideOn){c.setLineDash([10,6]);c.strokeStyle="#fff9";c.lineWidth=2;c.beginPath();c.moveTo(b.x,b.y);c.lineTo(impact?impact.x:b.x+aim.x*180,impact?impact.y:b.y+aim.y*180);c.stroke();c.setLineDash([])}const tailX=b.x-aim.x*310,tailY=b.y-aim.y*310,tipX=b.x-aim.x*18,tipY=b.y-aim.y*18;const stick=c.createLinearGradient(tailX,tailY,tipX,tipY);stick.addColorStop(0,"#271910");stick.addColorStop(.13,"#4b2517");stick.addColorStop(.24,"#a65d30");stick.addColorStop(.72,"#e6bd79");stick.addColorStop(.95,"#f6e6bd");stick.addColorStop(1,"#61b9da");c.lineCap="round";c.strokeStyle="#100e12aa";c.lineWidth=12;c.beginPath();c.moveTo(tailX+3,tailY+4);c.lineTo(tipX+3,tipY+4);c.stroke();c.strokeStyle=stick;c.lineWidth=9;c.beginPath();c.moveTo(tailX,tailY);c.lineTo(tipX,tipY);c.stroke();c.strokeStyle="#f8eac9";c.lineWidth=2;c.beginPath();c.moveTo(b.x-aim.x*58,b.y-aim.y*58);c.lineTo(tipX,tipY);c.stroke();c.lineCap="butt"}
+ const b=cue();if(b.alive&&!moving&&!won){/* Long projected cue-ball path, first contact, and predicted post-contact paths. */
+const dx=aim.x,dy=aim.y,edge=rad,eps=.001;
+let travel=Math.min(
+ dx>eps?(R-edge-b.x)/dx:dx< -eps?(L+edge-b.x)/dx:1e6,
+ dy>eps?(B-edge-b.y)/dy:dy< -eps?(T+edge-b.y)/dy:1e6
+);
+travel=Math.max(0,travel);let impact=null,target=null;
+for(const o of balls){if(!o.alive||o===b)continue;
+ const ox=o.x-b.x,oy=o.y-b.y,along=ox*dx+oy*dy;
+ if(along<=0)continue;
+ const offset2=ox*ox+oy*oy-along*along,rr=rad*2;
+ if(offset2>rr*rr)continue;
+ const t=along-Math.sqrt(Math.max(0,rr*rr-offset2));
+ if(t>=0&&t<travel){travel=t;impact={x:b.x+dx*t,y:b.y+dy*t};target=o}
+}
+const endX=b.x+dx*travel,endY=b.y+dy*travel;
+if(guideOn){
+ c.save();c.lineCap="round";
+ c.setLineDash([11,6]);c.lineWidth=2.6;c.strokeStyle="#f7ffffe6";
+ c.beginPath();c.moveTo(b.x,b.y);c.lineTo(endX,endY);c.stroke();c.setLineDash([]);
+ c.fillStyle="#ffffff25";c.strokeStyle="#fff9";c.lineWidth=1.5;
+ c.beginPath();c.arc(endX,endY,rad,0,Math.PI*2);c.fill();c.stroke();
+ if(target&&impact){
+  const nx=(target.x-impact.x)/(rad*2),ny=(target.y-impact.y)/(rad*2);
+  const dot=dx*nx+dy*ny;
+  const contactX=impact.x+nx*rad,contactY=impact.y+ny*rad;
+  c.fillStyle="#ffdf55";c.beginPath();c.arc(contactX,contactY,4.5,0,Math.PI*2);c.fill();
+  const ballLen=110*dot;
+  const tx=target.x+nx*ballLen,ty=target.y+ny*ballLen;
+  c.strokeStyle="#f8e65ee6";c.lineWidth=2.5;c.setLineDash([7,5]);
+  c.beginPath();c.moveTo(target.x,target.y);c.lineTo(tx,ty);c.stroke();
+  const rx=dx-nx*dot,ry=dy-ny*dot,remaining=Math.hypot(rx,ry);
+  if(remaining>.08){
+   const length=Math.min(135,135*remaining);
+   c.strokeStyle="#a8eeffe0";c.beginPath();c.moveTo(impact.x,impact.y);
+   c.lineTo(impact.x+rx/remaining*length,impact.y+ry/remaining*length);c.stroke()
+  }
+  c.setLineDash([]);c.strokeStyle="#ffde70a8";c.lineWidth=1.4;
+  c.beginPath();c.arc(target.x,target.y,rad+5,0,Math.PI*2);c.stroke()
+ }
+ c.restore()
+}
+const tailX=b.x-aim.x*310,tailY=b.y-aim.y*310,tipX=b.x-aim.x*18,tipY=b.y-aim.y*18;const stick=c.createLinearGradient(tailX,tailY,tipX,tipY);stick.addColorStop(0,"#271910");stick.addColorStop(.13,"#4b2517");stick.addColorStop(.24,"#a65d30");stick.addColorStop(.72,"#e6bd79");stick.addColorStop(.95,"#f6e6bd");stick.addColorStop(1,"#61b9da");c.lineCap="round";c.strokeStyle="#100e12aa";c.lineWidth=12;c.beginPath();c.moveTo(tailX+3,tailY+4);c.lineTo(tipX+3,tipY+4);c.stroke();c.strokeStyle=stick;c.lineWidth=9;c.beginPath();c.moveTo(tailX,tailY);c.lineTo(tipX,tipY);c.stroke();c.strokeStyle="#f8eac9";c.lineWidth=2;c.beginPath();c.moveTo(b.x-aim.x*58,b.y-aim.y*58);c.lineTo(tipX,tipY);c.stroke();c.lineCap="butt"}
  if(moving){c.fillStyle="#ffffffcc";c.font="bold 16px system-ui";c.fillText("Balls in motion",70,49)}if(placing){c.fillStyle="#ffffffcc";c.font="bold 21px system-ui";c.fillText("Tap inside the D to place the cue ball",110,105)}}
 function coords(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 function aimAt(p){const b=cue();const dx=p.x-b.x,dy=p.y-b.y,d=Math.hypot(dx,dy);if(d>4){aim={x:dx/d,y:dy/d};syncAimControls();draw()}}
