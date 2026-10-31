@@ -75,4 +75,49 @@ main>details.panel[open]{position:fixed;z-index:50;right:12px;bottom:12px;width:
  .power-panel output{font-size:12px}
  .power-panel button{font-size:9px;padding:3px 1px;min-height:30px}
 }
+
+/* v7: true non-overlapping one-screen dashboard */
+html,body{height:100%;height:100dvh;overflow:hidden}
+body{min-height:0}
+main{height:auto;min-height:0;flex:1 1 auto;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto auto;gap:5px;overflow:hidden;padding:6px 12px}
+.top,.scores,.spin-top,.play-layout,main>.panel,main>details.panel{min-height:0;margin:0}
+.top{grid-row:1}.scores{grid-row:2}
+.spin-top{grid-row:3;position:relative;z-index:1;justify-content:center;align-self:start;justify-self:center;width:max-content;max-width:100%;height:54px;padding:3px 14px;border-radius:0 0 12px 12px;border-top:0;background:#182e49eb}
+.play-layout{grid-row:3;min-height:0;align-self:stretch;display:grid;grid-template-columns:clamp(80px,10vw,125px) minmax(0,1fr) clamp(80px,9vw,115px);gap:8px;padding-top:59px;align-items:stretch}
+.play-layout .table-wrap{width:auto!important;max-width:100%;max-height:100%;height:auto;aspect-ratio:1000/520;align-self:center;justify-self:center;box-sizing:border-box;overflow:hidden}
+.play-layout .table-wrap canvas{width:100%;height:100%;display:block}
+.side-panel{height:100%;max-height:none;align-self:stretch;justify-content:space-evenly;overflow:hidden}
+.aim-panel{gap:3px}.aim-wheel{width:clamp(45px,6vw,78px)}
+.aim-panel button{min-height:26px}.aim-panel input{flex:0 0 auto}
+.power-vertical{height:clamp(70px,21dvh,185px)}
+.play-layout+.hint{display:none}
+main>.panel:not(details){grid-row:4;position:relative;z-index:0}
+main>details.panel:nth-last-of-type(2){grid-row:5}
+main>details.panel:last-of-type{grid-row:6}
+main>.panel:not(details),main>details.panel{flex:none}
+.spin-wheel{width:48px;height:48px}
+.spin-wheel-info small{display:none}
+@media(max-height:680px){
+ main{gap:3px;padding:3px 8px}
+ .spin-top{height:43px;padding:2px 9px}
+ .play-layout{padding-top:46px}
+ .spin-wheel{width:38px;height:38px}
+ .top h1{font-size:18px}
+ .scores .score b{font-size:15px}
+ .aim-wheel{width:44px}
+ .power-vertical{height:clamp(55px,17dvh,110px)}
+}
+@media(max-width:700px){
+ main{padding:4px;gap:3px}
+ .spin-top{height:43px;padding:2px 5px}
+ .spin-top>strong{font-size:9px}
+ .spin-wheel{width:38px;height:38px}
+ .spin-wheel-info{gap:1px}
+ .spin-wheel-info button{min-height:23px;padding:2px 4px}
+ .play-layout{grid-template-columns:48px minmax(0,1fr) 48px;gap:3px;padding-top:46px}
+ .play-layout .table-wrap{width:auto!important}
+ .side-panel{gap:2px;padding:3px 2px}
+ .aim-wheel{width:36px}
+ .power-vertical{height:clamp(55px,17dvh,120px)}
+}
 </style></head><body><div id="splash" role="dialog" aria-modal="true" aria-label="Snooker Arena welcome"><div class="splash-inner"><div class="splash-ball" aria-hidden="true">🎱</div><h2>SNOOKER ARENA</h2><p>6 Reds • 10 Reds • PvP • PvC</p><button id="enterGame">▶ Play Snooker</button><small>MasoomDev Games</small></div></div><header><a href="/games/">← MasoomDev Games</a></header><main><div class="top"><div><h1>🎱 Snooker Arena</h1><p class="sub">6-Red &amp; 10-Red • PvP or PvC • Faster physics • Mobile + Desktop</p></div><div class="actions"><label>Mode <select id="mode" aria-label="Game mode"><option value="pvp">PvP — 2 Players</option><option value="pvc">PvC — vs Computer</option></select></label><label>Red balls <select id="reds"><option value="6">6 Reds</option><option value="10">10 Reds</option></select></label><button id="new">New Match</button></div></div><div class="scores"><div id="p0" class="score active">Player 1<b id="s0">0</b></div><div id="p1" class="score">Player 2<b id="s1">0</b></div><span class="pill" id="target">On: Red (1)</span><span class="pill" id="remaining">Reds: 6</span></div><div class="spin-top"><strong>🎱 Cue Ball Spin</strong><div class="spin-wheel-row"><div id="spinWheel" class="spin-wheel" role="group" aria-label="Cue ball spin wheel"><div class="spin-wheel-ring"></div><div id="spinDot" class="spin-dot"></div><span class="spin-axis spin-axis-top">TOP</span><span class="spin-axis spin-axis-bottom">BACK</span><span class="spin-axis spin-axis-left">L</span><span class="spin-axis spin-axis-right">R</span></div><div class="spin-wheel-info"><span id="spinValue">Side 0% • Top/Back 0%</span><button id="resetSpin" type="button">Center Spin</button><small>Drag the dot to apply spin</small></div></div></div><div class="play-layout"><aside class="side-panel aim-panel"><strong>Aim Control</strong><div id="aimWheel" class="aim-wheel" role="slider" tabindex="0" aria-label="Aim direction wheel" aria-valuemin="0" aria-valuemax="359" aria-valuenow="0"><div class="wheel-marker"></div><div class="wheel-center">🎯</div></div><output id="aimAngle">0°</output><label class="fine-label" for="fineAim">Fine aim</label><input id="fineAim" type="range" min="-30" max="30" step="0.25" value="0"><button id="aimMinus" type="button">↶ Left</button><button id="aimPlus" type="button">Right ↷</button></aside><div class="table-wrap"><canvas id="table" width="1000" height="520" aria-label="Interactive snooker table. Drag from cue ball to aim, release to set direction."></canvas></div><aside class="side-panel power-panel"><strong>Stick Power</strong><div class="power-vertical"><input id="power" type="range" orient="vertical" min="5" max="100" value="60" aria-label="Shot power"></div><output id="powerLabel">60%</output><button id="shoot" class="primary">🎯 Shoot</button></aside></div><div class="hint">Extended aiming line and longer cue stick • More powerful shots • PvP or PvC</div><div class="panel"><div class="actions"><button id="guide" aria-pressed="true">Guideline On</button><button id="place" title="Reposition cue ball after a foul">Place Cue Ball</button><button id="sound" aria-pressed="true">🔊 Sound On</button></div><p class="message" id="message">Player 1 to break. Aim by dragging from the white ball.</p></div><details class="panel rules"><summary>Recent shots &amp; fouls</summary><ol id="history" aria-live="polite"></ol></details><details class="panel rules"><summary>Rules &amp; controls</summary><p>Pot a red (1 point), then a colour (2–7 points), alternating while reds remain. Colours are respotted until all reds are gone. After the final red and its colour, pot colours in order: yellow, green, brown, blue, pink, black. A foul awards at least 4 points to the opponent and ends your visit. A legal pot continues your visit; a miss changes turns. Select PvP to play locally with a friend, or PvC to play against the computer. The computer selects available shots automatically. This is a casual snooker implementation: no nominated colours, free-ball, snookers-required, or referee-grade foul-and-miss decisions.</p><p>Drag on the table from the white ball to choose a shot direction. Use the power slider and Shoot. After potting the cue ball, use Place Cue Ball to reposition it in the D. Desktop mouse and mobile touch are supported.</p></details></main><script src="./snooker.js?v=6" defer></script><script>document.getElementById("enterGame").addEventListener("click",function(){const splash=document.getElementById("splash");splash.classList.add("dismissed");setTimeout(()=>splash.remove(),400)});</script></body></html>
