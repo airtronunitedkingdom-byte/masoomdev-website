@@ -6,7 +6,36 @@ let grid=read("2048board-"+difficulty,null),points=read("2048score-"+difficulty,
 let cards=[],revealed=[],matched=[],moves=0,lock=false;const symbols=["🍎","🌙","⭐","🚀","🐱","🎈","🌻","🍀"];function newMemory(){cards=[...symbols,...symbols];for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]]}revealed=[];matched=[];moves=0;lock=false;save("memory",null);drawMemory();$("memoryStatus").textContent="Find all 8 pairs"}function drawMemory(){if(!cards.length){newMemory();return}const board=$("memoryBoard");board.replaceChildren();cards.forEach((s,i)=>{const b=document.createElement("button");const shown=matched.includes(i)||revealed.includes(i);b.textContent=shown?s:"?";b.setAttribute("aria-label",shown?"Card "+s:"Hidden card "+(i+1));if(matched.includes(i))b.style.background="#c9f3da";b.disabled=matched.includes(i)||lock;b.onclick=()=>flip(i);board.append(b)});$("memoryMoves").textContent="Moves: "+moves;const b=read("memoryBest-"+difficulty,null);$("memoryBest").textContent="Fewest moves: "+(b??"—")}function flip(i){if(lock||revealed.includes(i)||matched.includes(i))return;revealed.push(i);drawMemory();if(revealed.length===2){moves++;if(cards[revealed[0]]===cards[revealed[1]]){matched.push(...revealed);revealed=[];drawMemory();if(matched.length===16){const best=read("memoryBest-"+difficulty,null);if(best===null||moves<best)save("memoryBest-"+difficulty,moves);$("memoryStatus").textContent="You won in "+moves+" moves!";drawMemory()}}else{lock=true;drawMemory();setTimeout(()=>{revealed=[];lock=false;if(active==="memory")drawMemory()},mode().flip)}}} $("memoryNew").onclick=newMemory;
 
 document.addEventListener("keydown",e=>{const tag=e.target.tagName;if(["INPUT","TEXTAREA","SELECT"].includes(tag))return;const dirs={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right"};if(active==="dino"&&(e.code==="Space"||e.key==="ArrowUp")){e.preventDefault();jump();return}const d=dirs[e.key];if(!d)return;e.preventDefault();if(active==="snake")snakeMove(d);else if(active==="lane"){if(d==="left")moveLane(-1);if(d==="right")moveLane(1)}else if(active==="puzzle")movePuzzle(d)});
-let touch=null;for(const id of ["snake","dino","lane","puzzle"]){const el=id==="puzzle"?$("puzzleBoard"):$(id+"Canvas");el.addEventListener("touchstart",e=>{const t=e.changedTouches[0];touch=[t.clientX,t.clientY]},{passive:true});el.addEventListener("touchend",e=>{if(!touch)return;const t=e.changedTouches[0],dx=t.clientX-touch[0],dy=t.clientY-touch[1];touch=null;if(Math.max(Math.abs(dx),Math.abs(dy))<25){if(id==="dino")jump();return}const d=Math.abs(dx)>Math.abs(dy)?dx>0?"right":"left":dy>0?"down":"up";if(id==="snake")snakeMove(d);if(id==="puzzle")movePuzzle(d);if(id==="lane"){if(d==="left")moveLane(-1);if(d==="right")moveLane(1)}if(id==="dino")jump()},{passive:true})}
+// Mobile input: use Pointer Events for touch/pen and mouse, with touch fallback.
+function mobileDirection(id,dir){
+  if(id==="snake")snakeMove(dir);
+  else if(id==="puzzle")movePuzzle(dir);
+  else if(id==="lane"){if(dir==="left")moveLane(-1);if(dir==="right")moveLane(1)}
+  else if(id==="dino")jump();
+}
+for(const id of ["snake","dino","lane","puzzle"]){
+  const el=id==="puzzle"?$("puzzleBoard"):$(id+"Canvas");
+  let startPoint=null;
+  const begin=(x,y)=>{startPoint={x,y}};
+  const finish=(x,y)=>{
+    if(!startPoint)return;
+    const dx=x-startPoint.x,dy=y-startPoint.y;
+    startPoint=null;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<22){if(id==="dino")jump();return}
+    const dir=Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up");
+    mobileDirection(id,dir);
+  };
+  el.style.touchAction="none";
+  if(window.PointerEvent){
+    el.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;begin(e.clientX,e.clientY);if(el.setPointerCapture)el.setPointerCapture(e.pointerId)});
+    el.addEventListener("pointerup",e=>finish(e.clientX,e.clientY));
+    el.addEventListener("pointercancel",()=>{startPoint=null});
+  }else{
+    el.addEventListener("touchstart",e=>{const t=e.changedTouches[0];begin(t.clientX,t.clientY)},{passive:true});
+    el.addEventListener("touchend",e=>{const t=e.changedTouches[0];finish(t.clientX,t.clientY)},{passive:true});
+  }
+}
+
 for(const id of ["snake","dino","lane"]){$(id+"Best").textContent="Best: "+read(id+"best-"+difficulty,0)}if(!Array.isArray(grid)||grid.length!==16)newPuzzle();else drawPuzzle();newMemory();
 
 const tttLines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let ttt=Array(9).fill(""),tttTurn="X",tttOver=false;
