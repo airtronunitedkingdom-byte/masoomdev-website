@@ -13,7 +13,7 @@ function reset(){clearTimeout(aiTimer);lastFrameTime=0;cancelAnimationFrame(raf)
  balls.push(ball("white",L+155,315));
  const n=reds===6?3:4;let count=0;for(let row=0;row<n;row++)for(let k=0;k<=row;k++){if(count++>=reds)break;balls.push(ball("red",740+row*20,260-row*11+k*22))}
  for(const type of order)balls.push(ball(type,...spots[type]));
- message("Player 1 to break. Drag to aim.");renderHistory();ui();syncAimControls();draw()}
+ message("Player 1 to break. Drag to aim.");renderHistory();resetShotControls();ui();draw()}
 function cue(){return balls.find(b=>b.type==="white")}
 function redCount(){return balls.filter(b=>b.alive&&b.type==="red").length}
 function ui(){for(let i=0;i<2;i++){$("s"+i).textContent=scores[i];$("p"+i).classList.toggle("active",player===i)}
@@ -42,7 +42,7 @@ function settle(){moving=false;const white=cue(),p=shot.potted,first=shot.first,
   resPot(b)}
  if(!white.alive){placing=true;message($("message").textContent+" Place the white ball inside the D.")}
  if(phase==="clear"&&clearIndex>=order.length){won=true;message("Frame over! "+(scores[0]===scores[1]?"Tie game.":"Player "+(scores[0]>scores[1]?1:2)+" wins!")+" Final "+scores.join("–"))}
- shot=null;ui();draw();queueComputer()}
+ shot=null;resetShotControls();ui();draw();queueComputer()}
 function isComputerTurn(){return $("mode").value==="pvc"&&player===1&&!won}
 function queueComputer(){clearTimeout(aiTimer);if(!isComputerTurn()||moving||won)return;aiTimer=setTimeout(computerShot,850)}
 function clearPath(from,to,ignore){const dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy);if(len<1)return false;return balls.every(b=>!b.alive||b===from||b===ignore||Math.abs((b.x-from.x)*dy-(b.y-from.y)*dx)/len>rad*2+2||((b.x-from.x)*dx+(b.y-from.y)*dy)/len<=0||((b.x-from.x)*dx+(b.y-from.y)*dy)/len>=len)}
@@ -84,5 +84,14 @@ $("fineAim").oninput=e=>{changeAim(Number(e.target.value));e.target.value=0};
 $("mode").onchange=reset; $("power").oninput=()=>{$("powerLabel").textContent=$("power").value+"%"};$("shoot").onclick=hit;$("new").onclick=reset;$("reds").onchange=reset;
 $("place").onclick=()=>{if(!moving&&!cue().alive){placing=true;message("Tap inside the D (left semicircle) to place the white ball.");draw()}};
 $("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound On":"🔇 Sound Off";$("sound").setAttribute("aria-pressed",String(soundOn))};
-$("guide").onclick=()=>{guideOn=!guideOn;$("guide").textContent=guideOn?"Guideline On":"Guideline Off";$("guide").setAttribute("aria-pressed",String(guideOn));draw()};function updateSpin(){spinX=Number($("sideSpin").value)/100;spinY=Number($("topSpin").value)/100;$("spinValue").textContent="Side "+(spinX*100).toFixed(0)+"% • Top/Back "+(spinY*100).toFixed(0)+"%";draw()}$("sideSpin").oninput=updateSpin;$("topSpin").oninput=updateSpin;$("resetSpin").onclick=()=>{$("sideSpin").value=0;$("topSpin").value=0;updateSpin()};$("power").addEventListener("change",()=>draw());window.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="BUTTON"){e.preventDefault();hit()}});
+$("guide").onclick=()=>{guideOn=!guideOn;$("guide").textContent=guideOn?"Guideline On":"Guideline Off";$("guide").setAttribute("aria-pressed",String(guideOn));draw()};function updateSpin(x,y){spinX=clamp(x,-1,1);spinY=clamp(y,-1,1);const dot=$("spinDot");dot.style.left=(50+spinX*38)+"%";dot.style.top=(50-spinY*38)+"%";$("spinValue").textContent="Side "+Math.round(spinX*100)+"% • Top/Back "+Math.round(spinY*100)+"%";draw()}
+const spinWheel=$("spinWheel");let spinDragging=false;
+function spinFromPointer(e){const r=spinWheel.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,radius=(r.width-12)*.38;let x=(e.clientX-cx)/radius,y=(cy-e.clientY)/radius;const d=Math.hypot(x,y);if(d>1){x/=d;y/=d}updateSpin(x,y)}
+spinWheel.addEventListener("pointerdown",e=>{e.preventDefault();spinDragging=true;spinWheel.setPointerCapture(e.pointerId);spinFromPointer(e)});
+spinWheel.addEventListener("pointermove",e=>{if(spinDragging)spinFromPointer(e)});
+spinWheel.addEventListener("pointerup",()=>spinDragging=false);
+spinWheel.addEventListener("pointercancel",()=>spinDragging=false);
+$("resetSpin").onclick=()=>updateSpin(0,0);
+function resetShotControls(){spinX=0;spinY=0;updateSpin(0,0);$("power").value=60;$("powerLabel").textContent="60%";$("fineAim").value=0;aim={x:1,y:0};syncAimControls()}
+$("power").addEventListener("change",()=>draw());window.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="BUTTON"){e.preventDefault();hit()}});
 reset();
