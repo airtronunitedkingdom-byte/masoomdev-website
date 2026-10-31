@@ -2,9 +2,16 @@
 
 Official developer website for **MasoomDev** — games, puzzles and everyday tools.
 
-## Run locally
+## Run locally (Windows, no Vercel required)
 
-Static website: open `index.html` in a browser, or use any local static HTTP server.
+1. Download or clone this repository to your Windows PC.
+2. Install Python 3 if it is not already installed (no Python packages are needed).
+3. Double-click `START-LOCAL.bat`.
+4. Open `http://localhost:3000` if your browser does not open automatically.
+5. Edit and save website files; the local browser automatically refreshes after a change.
+6. Press Ctrl+C in the terminal to stop the preview.
+
+The local server binds to `127.0.0.1` only. It serves the existing static site, supports client-side routes, and disables caching for development. Local static pages work without internet; external APIs and remote assets still need connectivity. Local testing does not consume Vercel deployments. Pushing commits to the production-connected branch may still trigger an automatic Vercel deployment, depending on Vercel settings.
 
 ## Deploy to Vercel
 
