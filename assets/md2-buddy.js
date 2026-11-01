@@ -1,6 +1,6 @@
 /* Masoom Buddy 2.0 — animated local guide. No AI API, tracking or account required. */
 (()=>{'use strict';
-const robot='<svg class="mb-robot" viewBox="0 0 100 100" role="img" aria-label="Smiling purple robot"><defs><linearGradient id="mb-shell" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c8b7ff"/></linearGradient></defs><g class="mb-antenna"><path d="M50 17V9" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round"/><circle cx="50" cy="8" r="5" fill="#c084fc"/></g><rect x="12" y="22" width="76" height="63" rx="26" fill="url(#mb-shell)" stroke="#8c65e8" stroke-width="3"/><rect x="20" y="31" width="60" height="43" rx="17" fill="#211641"/><ellipse cx="38" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><ellipse cx="62" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><path d="M41 63q9 9 18 0" fill="none" stroke="#c6a6ff" stroke-width="4" stroke-linecap="round"/><circle class="mb-cheek" cx="19" cy="68" r="6" fill="#f9a8d4"/><circle class="mb-cheek" cx="81" cy="68" r="6" fill="#f9a8d4"/></svg>';
+const robot='<svg class="mb-robot" viewBox="-12 0 124 125" role="img" aria-label="Smiling purple robot"><defs><linearGradient id="mb-shell" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c8b7ff"/></linearGradient></defs><g class="mb-antenna"><path d="M50 17V9" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round"/><circle cx="50" cy="8" r="5" fill="#c084fc"/></g><g class="mb-arm mb-arm-left"><path d="M13 45 Q-5 38 -5 56" fill="none" stroke="#a78bfa" stroke-width="9" stroke-linecap="round"/><circle cx="-5" cy="56" r="7" fill="#d8c8ff"/></g><g class="mb-arm mb-arm-right"><path d="M87 45 Q105 38 105 56" fill="none" stroke="#a78bfa" stroke-width="9" stroke-linecap="round"/><circle cx="105" cy="56" r="7" fill="#d8c8ff"/></g><g class="mb-leg mb-leg-left"><path d="M36 82 L33 104" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round"/><ellipse cx="28" cy="106" rx="13" ry="7" fill="#c4b5fd"/></g><g class="mb-leg mb-leg-right"><path d="M64 82 L67 104" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round"/><ellipse cx="72" cy="106" rx="13" ry="7" fill="#c4b5fd"/></g><rect x="12" y="22" width="76" height="63" rx="26" fill="url(#mb-shell)" stroke="#8c65e8" stroke-width="3"/><rect x="20" y="31" width="60" height="43" rx="17" fill="#211641"/><ellipse cx="38" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><ellipse cx="62" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><path d="M41 63q9 9 18 0" fill="none" stroke="#c6a6ff" stroke-width="4" stroke-linecap="round"/><circle class="mb-cheek" cx="19" cy="68" r="6" fill="#f9a8d4"/><circle class="mb-cheek" cx="81" cy="68" r="6" fill="#f9a8d4"/></svg>';
 const css=document.createElement('style');css.textContent=`
 #md2-buddy{position:fixed;right:18px;bottom:18px;z-index:9000;font:14px/1.5 system-ui,sans-serif;color:#24183f}#md2-buddy *{box-sizing:border-box}
 #md2-buddy-launch{width:76px;height:76px;border-radius:50%;border:3px solid white;background:linear-gradient(145deg,#ad86ff,#6735d9);box-shadow:0 9px 30px #5630b66e;cursor:pointer;display:grid;place-items:center;animation:mb-float 3.5s ease-in-out infinite}
@@ -31,6 +31,21 @@ const css=document.createElement('style');css.textContent=`
 @media(prefers-reduced-motion:reduce){#md2-buddy-launch,#md2-buddy-launch:before,#md2-buddy-launch .mb-robot,#md2-buddy-launch .mb-antenna,#md2-buddy-launch .mb-cheek{animation:none!important;transition:none!important}}
 
 
+/* Animated limbs: walking gait, waves, and a cheerful stationary dance. */
+#md2-buddy-launch .mb-arm,#md2-buddy-launch .mb-leg{transform-box:fill-box;transform-origin:center top}
+#md2-buddy.mb-walking .mb-leg-left{animation:mb-step-left .48s ease-in-out infinite alternate}
+#md2-buddy.mb-walking .mb-leg-right{animation:mb-step-right .48s ease-in-out infinite alternate}
+#md2-buddy.mb-walking .mb-arm-left{animation:mb-step-right .48s ease-in-out infinite alternate}
+#md2-buddy.mb-walking .mb-arm-right{animation:mb-step-left .48s ease-in-out infinite alternate}
+#md2-buddy.mb-waving .mb-arm-right{animation:mb-hand-wave .35s ease-in-out 6 alternate}
+#md2-buddy.mb-dancing .mb-arm-left{animation:mb-hand-wave .4s ease-in-out 5 alternate}
+#md2-buddy.mb-dancing .mb-arm-right{animation:mb-hand-wave .4s ease-in-out 5 alternate-reverse}
+#md2-buddy.mb-dancing .mb-leg-left{animation:mb-step-left .4s ease-in-out 5 alternate}
+#md2-buddy.mb-dancing .mb-leg-right{animation:mb-step-right .4s ease-in-out 5 alternate}
+@keyframes mb-step-left{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+@keyframes mb-step-right{from{transform:rotate(24deg)}to{transform:rotate(-24deg)}}
+@keyframes mb-hand-wave{from{transform:rotate(-15deg)}to{transform:rotate(-65deg)}}
+@media(prefers-reduced-motion:reduce){#md2-buddy .mb-arm,#md2-buddy .mb-leg{animation:none!important}}
 /* Roaming stays within the viewport; chat returns to its original dock. */
 #md2-buddy{transition:transform 3.8s cubic-bezier(.45,.05,.45,1)}
 #md2-buddy .mb-roam-emote{position:absolute;bottom:82px;right:16px;font-size:28px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;filter:drop-shadow(0 3px 6px #27154855)}
@@ -47,13 +62,13 @@ function bubble(message,who='bot',url){const el=document.createElement('div');el
 function reply(q){bubble(q,'user');const text=q.toLowerCase();let item=items.find(x=>x.terms.test(q));if(/this page|where am i|current page/i.test(q)){bubble('You are on '+document.title+'. I can help you find related apps, tools and games.');return}if(/hello|hi|hey|salam/i.test(text)){bubble('Hello! 👋 I’m Masoom Buddy. Tell me what you need: an app, a game, a converter or another tool.');return}if(item){bubble('I think '+item.name+' could help! '+item.desc,item.url?'bot':'bot',item.url)}else{bubble('I can guide you around MasoomDev, but I am not a live AI chatbot yet. Try asking for a video player, OCR, unit converter, calculator, apps or games.');}}
 let roamTimer=null,emoteTimer=null,roamPaused=false;
 const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
-function dock(){root.style.transform='translate(0px,0px)';emote.classList.remove('mb-visible')}
+function dock(){root.classList.remove('mb-walking','mb-waving','mb-dancing');root.style.transform='translate(0px,0px)';emote.classList.remove('mb-visible')}
 function roam(){if(roamPaused||!panel.hidden||motion.matches||document.hidden||window.innerWidth<700){dock();return}
  const size=launch.getBoundingClientRect().width||76;
  const maxX=Math.max(0,window.innerWidth-size-32),maxY=Math.max(0,window.innerHeight-size-42);
  const x=16+Math.random()*maxX-(window.innerWidth-size-18);
  const y=16+Math.random()*maxY-(window.innerHeight-size-18);
- root.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
+ root.classList.remove('mb-waving','mb-dancing');root.classList.add('mb-walking');root.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';setTimeout(()=>{root.classList.remove('mb-walking');if(!panel.hidden||document.hidden)return;root.classList.add(Math.random()<.65?'mb-waving':'mb-dancing');setTimeout(()=>root.classList.remove('mb-waving','mb-dancing'),2400)},4000);
  emote.textContent=['👋','💜','✨','😊','🎉','🤖','⭐'][Math.floor(Math.random()*7)];
  emote.classList.add('mb-visible');clearTimeout(emoteTimer);emoteTimer=setTimeout(()=>emote.classList.remove('mb-visible'),1800);
 }
