@@ -28,5 +28,54 @@ html[data-md-theme="dark"] :is(input,textarea,select,pre,output,[role="textbox"]
 const links=[['Home','/'],['Our Apps','/apps/'],['HTML Tools','/tools/'],['Games','/games/'],['Extensions','/extensions/'],['About','/about/'],['Privacy','/privacy/'],['Support','/support/'],['Terms','/terms/']];const panel=h.querySelector('#md-u-panel');for(const [name,url] of links){const x=document.createElement('a');x.href=url;x.textContent=name;if(location.pathname.replace(/index\.html$/,'')===url)x.setAttribute('aria-current','page');panel.appendChild(x)}
 const menu=h.querySelector('.md-u-menu-button');function close(){panel.hidden=true;menu.setAttribute('aria-expanded','false');menu.textContent='☰ Menu'}menu.addEventListener('click',()=>{const open=panel.hidden;panel.hidden=!open;menu.setAttribute('aria-expanded',String(open));menu.textContent=open?'✕ Close':'☰ Menu'});document.addEventListener('pointerdown',e=>{if(!h.querySelector('.md-u-menu').contains(e.target))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 const key='md2-theme',theme=h.querySelector('.md-u-theme');let saved;try{saved=localStorage.getItem(key)}catch{}function sync(){const dark=document.documentElement.dataset.mdTheme==='dark';theme.textContent=dark?'☀':'☾';theme.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');theme.setAttribute('aria-pressed',String(dark))}if(saved==='dark'||saved==='light')document.documentElement.dataset.mdTheme=saved;sync();theme.addEventListener('click',()=>{const next=document.documentElement.dataset.mdTheme==='dark'?'light':'dark';document.documentElement.dataset.mdTheme=next;try{localStorage.setItem(key,next)}catch{}sync()});
+
+/* Directory-only search, category filter and sorting; game/tool workspaces remain unchanged. */
+function setupDirectoryControls(){
+ const path=location.pathname.replace(/index\\.html$/,'');
+ const configs={
+ '/tools/':{hub:'#toolsHub',grid:'.tool-grid',item:'.tool-launch',title:'strong',categories:[['All',''],['Editors','notepad|html-editor'],['Calculators','calc|ebay|pct|percentage'],['Text & Code','words|pass|json|case'],['Images','image']]},
+ '/games/':{hub:'#gamesHub',grid:'.game-grid',item:'.game-launch',title:'strong',categories:[['All',''],['Puzzle & Strategy','puzzle|ttt|mines|word-scramble|number-guess|math-quiz'],['Action & Arcade','snake|dino|lane|reaction-time|snooker']]},
+ '/extensions/':{hub:'main',grid:'.grid',item:'.card',title:'h2',categories:[['All',''],['Productivity','text-expander'],['Shopping Tools','shein|ebay']]},
+ '/apps/':{hub:'main',grid:'.cards',item:'.card',title:'h3',categories:[]}
+ };
+ const cfg=configs[path];if(!cfg)return;
+ const hub=document.querySelector(cfg.hub);if(!hub)return;
+ const grids=[...hub.querySelectorAll(cfg.grid)].filter(g=>g.querySelector(cfg.item));
+ if(!grids.length)return;
+ const style=document.createElement('style');style.textContent=`
+ .md-directory-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:18px 0 20px;padding:16px;border:1px solid #dcd5ed;border-radius:15px;background:#f8f6ff;color:#28203c}
+ .md-directory-controls label{display:grid;gap:5px;font-size:13px;font-weight:700;flex:1 1 160px;min-width:0}
+ .md-directory-controls input,.md-directory-controls select{width:100%;box-sizing:border-box;padding:10px 12px;min-height:42px;border-radius:9px;border:1px solid #b9afd0;background:#fff;color:#261c3d;font:inherit}
+ .md-directory-count{flex:1 1 100%;font-size:12px;opacity:.8}
+ .md-directory-empty{padding:16px;text-align:center;border:1px dashed #9585b6;border-radius:12px;margin:12px 0}
+ html[data-md-theme="dark"] .md-directory-controls{background:#241d36;color:#f6f1ff;border-color:#65577d}
+ html[data-md-theme="dark"] .md-directory-controls input,html[data-md-theme="dark"] .md-directory-controls select{background:#191426!important;color:#f6f1ff!important;border-color:#82739c!important}
+ html[data-md-theme="dark"] .md-directory-empty{color:#f6f1ff;border-color:#82739c}
+ `;document.head.appendChild(style);
+ grids.forEach(grid=>{
+  const cards=[...grid.querySelectorAll(':scope > '+cfg.item)];
+  if(cards.length<2)return;
+  const bar=document.createElement('div');bar.className='md-directory-controls';bar.setAttribute('role','search');
+  const searchLabel=document.createElement('label');searchLabel.textContent='Search';const search=document.createElement('input');search.type='search';search.placeholder='Search by name or description';search.setAttribute('aria-label','Search items');searchLabel.appendChild(search);bar.appendChild(searchLabel);
+  let filter=null;
+  if(cfg.categories.length){const label=document.createElement('label');label.textContent='Filter';filter=document.createElement('select');filter.setAttribute('aria-label','Filter by category');cfg.categories.forEach(([name,value])=>{const o=document.createElement('option');o.value=value;o.textContent=name;filter.appendChild(o)});label.appendChild(filter);bar.appendChild(label)}
+  const sortLabel=document.createElement('label');sortLabel.textContent='Sort by';const sort=document.createElement('select');[['default','Default order'],['az','Name: A to Z'],['za','Name: Z to A']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sort.appendChild(o)});sortLabel.appendChild(sort);bar.appendChild(sortLabel);
+  const count=document.createElement('div');count.className='md-directory-count';count.setAttribute('aria-live','polite');bar.appendChild(count);
+  const empty=document.createElement('p');empty.className='md-directory-empty';empty.hidden=true;empty.textContent='No matching items found. Try a different search or filter.';
+  grid.before(bar);grid.after(empty);
+  const data=cards.map((el,index)=>({el,index,name:(el.querySelector(cfg.title)?.textContent||'').trim(),text:el.textContent.toLowerCase(),link:(el.querySelector('a[href]')||el).getAttribute('href')||''}));
+  function apply(){
+   const q=search.value.trim().toLowerCase(),category=filter?.value||'';
+   const visible=data.filter(x=>(!q||x.text.includes(q))&&(!category||category.split('|').some(k=>(x.name+' '+x.link).toLowerCase().includes(k))));
+   visible.sort((a,b)=>sort.value==='az'?a.name.localeCompare(b.name):sort.value==='za'?b.name.localeCompare(a.name):a.index-b.index);
+   data.forEach(x=>{x.el.hidden=!visible.includes(x);x.el.style.display=visible.includes(x)?'':'none'});
+   visible.forEach(x=>grid.appendChild(x.el));
+   count.textContent=visible.length+' of '+data.length+' items';empty.hidden=visible.length!==0;
+  }
+  search.addEventListener('input',apply);filter?.addEventListener('change',apply);sort.addEventListener('change',apply);apply();
+ });
+}
+setupDirectoryControls();
+
 /* Remove legacy injected theme buttons while retaining the single universal control. */const removeLegacy=()=>{document.querySelectorAll('#md2-theme,#md-theme-toggle').forEach(b=>b.remove())};removeLegacy();const observer=new MutationObserver(removeLegacy);observer.observe(document.body,{childList:true,subtree:true});
 }if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init()})();
