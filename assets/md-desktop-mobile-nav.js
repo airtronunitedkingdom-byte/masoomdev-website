@@ -59,7 +59,7 @@ function setupDirectoryControls(){
   const searchLabel=document.createElement('label');searchLabel.textContent='Search';const search=document.createElement('input');search.type='search';search.placeholder='Search by name or description';search.setAttribute('aria-label','Search items');searchLabel.appendChild(search);bar.appendChild(searchLabel);
   let filter=null;
   if(cfg.categories.length){const label=document.createElement('label');label.textContent='Filter';filter=document.createElement('select');filter.setAttribute('aria-label','Filter by category');cfg.categories.forEach(([name,value])=>{const o=document.createElement('option');o.value=value;o.textContent=name;filter.appendChild(o)});label.appendChild(filter);bar.appendChild(label)}
-  const sortLabel=document.createElement('label');sortLabel.textContent='Sort by';const sort=document.createElement('select');[['default','Default order'],['az','Name: A to Z'],['za','Name: Z to A']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sort.appendChild(o)});sortLabel.appendChild(sort);bar.appendChild(sortLabel);
+  const sortLabel=document.createElement('label');sortLabel.textContent='Sort by';const sort=document.createElement('select');[['default','Default order'],['az','Name: A to Z'],['za','Name: Z to A'],['latest','Latest added'],['oldest','Oldest added']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sort.appendChild(o)});sortLabel.appendChild(sort);bar.appendChild(sortLabel);
   const count=document.createElement('div');count.className='md-directory-count';count.setAttribute('aria-live','polite');bar.appendChild(count);
   const empty=document.createElement('p');empty.className='md-directory-empty';empty.hidden=true;empty.textContent='No matching items found. Try a different search or filter.';
   grid.before(bar);grid.after(empty);
@@ -67,7 +67,7 @@ function setupDirectoryControls(){
   function apply(){
    const q=search.value.trim().toLowerCase(),category=filter?.value||'';
    const visible=data.filter(x=>(!q||x.text.includes(q))&&(!category||category.split('|').some(k=>(x.name+' '+x.link).toLowerCase().includes(k))));
-   visible.sort((a,b)=>sort.value==='az'?a.name.localeCompare(b.name):sort.value==='za'?b.name.localeCompare(a.name):a.index-b.index);
+   visible.sort((a,b)=>sort.value==='az'?a.name.localeCompare(b.name):sort.value==='za'?b.name.localeCompare(a.name):sort.value==='latest'?b.index-a.index:a.index-b.index);
    data.forEach(x=>{x.el.hidden=!visible.includes(x);x.el.style.display=visible.includes(x)?'':'none'});
    visible.forEach(x=>grid.appendChild(x.el));
    count.textContent=visible.length+' of '+data.length+' items';empty.hidden=visible.length!==0;
