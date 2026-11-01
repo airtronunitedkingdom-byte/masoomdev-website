@@ -62,13 +62,13 @@ function bubble(message,who='bot',url){const el=document.createElement('div');el
 function reply(q){bubble(q,'user');const text=q.toLowerCase();let item=items.find(x=>x.terms.test(q));if(/this page|where am i|current page/i.test(q)){bubble('You are on '+document.title+'. I can help you find related apps, tools and games.');return}if(/hello|hi|hey|salam/i.test(text)){bubble('Hello! 👋 I’m Masoom Buddy. Tell me what you need: an app, a game, a converter or another tool.');return}if(item){bubble('I think '+item.name+' could help! '+item.desc,item.url?'bot':'bot',item.url)}else{bubble('I can guide you around MasoomDev, but I am not a live AI chatbot yet. Try asking for a video player, OCR, unit converter, calculator, apps or games.');}}
 let roamTimer=null,emoteTimer=null,roamPaused=false;
 const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
-function dock(){root.classList.remove('mb-walking','mb-waving','mb-dancing');root.style.transform='translate(0px,0px)';emote.classList.remove('mb-visible')}
+function dock(){root.classList.remove('mb-walking','mb-waving','mb-dancing');root.style.transitionDuration='1.2s';root.style.transform='translate(0px,0px)';emote.classList.remove('mb-visible')}
 function roam(){if(roamPaused||!panel.hidden||motion.matches||document.hidden||window.innerWidth<700){dock();return}
  const size=launch.getBoundingClientRect().width||76;
  const maxX=Math.max(0,window.innerWidth-size-32),maxY=Math.max(0,window.innerHeight-size-42);
  const x=16+Math.random()*maxX-(window.innerWidth-size-18);
  const y=16+Math.random()*maxY-(window.innerHeight-size-18);
- root.classList.remove('mb-waving','mb-dancing');root.classList.add('mb-walking');root.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';setTimeout(()=>{root.classList.remove('mb-walking');if(!panel.hidden||document.hidden)return;root.classList.add(Math.random()<.65?'mb-waving':'mb-dancing');setTimeout(()=>root.classList.remove('mb-waving','mb-dancing'),2400)},5300);
+ root.classList.remove('mb-waving','mb-dancing');root.classList.add('mb-walking');root.style.transitionDuration='1.2s';root.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';setTimeout(()=>{root.classList.remove('mb-walking');if(!panel.hidden||document.hidden)return;root.classList.add(Math.random()<.65?'mb-waving':'mb-dancing');setTimeout(()=>root.classList.remove('mb-waving','mb-dancing'),2400)},5300);
  emote.textContent=['👋','💜','✨','😍','🎉','🥳','⭐','❤️','😎','🌟'][Math.floor(Math.random()*7)];
  emote.classList.add('mb-visible');clearTimeout(emoteTimer);emoteTimer=setTimeout(()=>emote.classList.remove('mb-visible'),1800);
 }
