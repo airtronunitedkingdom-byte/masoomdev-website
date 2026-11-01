@@ -1,0 +1,28 @@
+/* MasoomDev 2.0 — Phase 2: accessible on-device discovery, no account or API. */
+(()=>{'use strict';
+const items=[
+['Apps','Explore Android and Windows apps','/apps/','apps android windows player calculator'],
+['MH Player','Offline video and audio player','/apps/mh-player/','mh player video music audio'],
+['Snip & Extract','Screenshot and OCR utility','/apps/snip-extract/','snip extract screenshot ocr'],
+['Games','Play free browser games','/games/','games play snake memory 2048 dinosaur'],
+['Reaction Time','Test your reflexes','/games/reaction-time/','reaction reflex speed'],
+['Tools','Browse free utilities','/tools/','tools calculator percentage password'],
+['Unit Converter','Convert everyday units','/tools/unit-converter/','unit convert length weight temperature'],
+['Age Calculator','Calculate your age','/tools/age-calculator/','age birthday days'],
+['SEO Tools','Free SEO utilities','/seo-tools/','seo keywords meta robots sitemap'],
+['Extensions','Download browser extensions','/extensions/','chrome extension text expander shein ebay'],
+['About MasoomDev','Learn about our projects','/about/','about developer'],
+['Support','Questions and feedback','/support/','contact help support']
+];
+function start(){const hero=document.querySelector('.hero .shell');if(!hero||document.getElementById('md2-discover'))return;
+const wrap=document.createElement('section');wrap.id='md2-discover';wrap.setAttribute('aria-label','Discover MasoomDev');
+wrap.innerHTML='<div class="md2-discover-head"><span class="md2-discover-kicker">✦ EXPLORE SOMETHING NEW</span><h2>What would you like to try?</h2><p>Find a game, app or useful tool in seconds.</p></div><div class="md2-searchbar"><label class="md2-sr" for="md2-query">Search MasoomDev</label><input id="md2-query" type="search" autocomplete="off" placeholder="Search apps, games, tools…" aria-controls="md2-results"><button type="button" id="md2-surprise">🎲 Surprise me</button></div><div id="md2-results" class="md2-results" aria-live="polite"></div>';
+const anchor=hero.querySelector('.stats');if(anchor)hero.insertBefore(wrap,anchor);else hero.appendChild(wrap);
+const input=wrap.querySelector('#md2-query'),results=wrap.querySelector('#md2-results');
+function render(q){const terms=q.toLowerCase().trim().split(/\s+/).filter(Boolean);const found=terms.length?items.filter(x=>terms.every(t=>(x[0]+' '+x[1]+' '+x[3]).toLowerCase().includes(t))):items.filter(x=>['Games','Tools','Extensions'].includes(x[0]));results.replaceChildren();if(!found.length){const p=document.createElement('p');p.textContent='No matching results. Try “games”, “calculator” or “extensions”.';results.appendChild(p);return}found.slice(0,6).forEach(x=>{const link=document.createElement('a');link.href=x[2];link.className='md2-result';const title=document.createElement('strong');title.textContent=x[0];const desc=document.createElement('span');desc.textContent=x[1];link.append(title,desc);results.appendChild(link)})}
+input.addEventListener('input',()=>render(input.value));render('');
+wrap.querySelector('#md2-surprise').addEventListener('click',()=>{const pool=items.filter(x=>!['About MasoomDev','Support'].includes(x[0]));let last=-1;try{last=Number(sessionStorage.getItem('md2-last-surprise'))}catch(e){}let idx=Math.floor(Math.random()*pool.length);if(pool.length>1&&idx===last)idx=(idx+1)%pool.length;try{sessionStorage.setItem('md2-last-surprise',String(idx))}catch(e){}window.location.assign(pool[idx][2])});
+}
+const css=document.createElement('style');css.id='md2-discovery-css';css.textContent='#md2-discover{margin:32px 0 18px;padding:clamp(18px,3vw,30px);border:1px solid var(--md-border,#ded9ef);border-radius:22px;background:var(--md-surface,#fff);box-shadow:0 12px 40px #6e52ba12;max-width:100%}#md2-discover h2{font-size:clamp(22px,3vw,30px);margin:4px 0}#md2-discover p{margin:0 0 18px;color:var(--md-muted,#655b78)}.md2-discover-kicker{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--md-accent,#7654e8)}.md2-searchbar{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}.md2-searchbar input{flex:1 1 230px;min-width:0;border:1px solid var(--md-border,#ded9ef);border-radius:12px;padding:13px 16px;font:inherit;background:var(--md-surface,#fff);color:var(--md-text,#27213b)}.md2-searchbar button{border:0;border-radius:12px;background:#7052d9;color:#fff;padding:12px 18px;font:700 15px system-ui;cursor:pointer;min-height:48px}.md2-searchbar button:hover{background:#5837c0}.md2-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.md2-result{display:flex;flex-direction:column;gap:3px;min-width:0;text-decoration:none!important;padding:13px;border:1px solid var(--md-border,#ded9ef);border-radius:12px;color:var(--md-text,#27213b)!important;background:var(--md-soft,#f3efff)}.md2-result span{font-size:12px;color:var(--md-muted,#655b78)}.md2-result:hover,.md2-result:focus-visible{outline:2px solid var(--md-accent,#7654e8);outline-offset:1px}.md2-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}@media(max-width:760px){.md2-results{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:460px){.md2-results{grid-template-columns:minmax(0,1fr)}.md2-searchbar button{width:100%}}@media(prefers-reduced-motion:reduce){#md2-discover *{transition:none!important}}';document.head.appendChild(css);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
