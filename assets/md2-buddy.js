@@ -47,11 +47,11 @@ const css=document.createElement('style');css.textContent=`
 @keyframes mb-hand-wave{from{transform:rotate(-15deg)}to{transform:rotate(-65deg)}}
 @media(prefers-reduced-motion:reduce){#md2-buddy .mb-arm,#md2-buddy .mb-leg{animation:none!important}}
 /* Compact speed control follows the robot and saves its setting. */
-#md2-buddy .mb-speed{position:absolute;right:0;bottom:110px;display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:15px;background:#fffefef0;border:1px solid #bca3f4;box-shadow:0 4px 14px #3820562b;color:#5631a0;font:600 11px system-ui,sans-serif;white-space:nowrap}
-#md2-buddy .mb-speed input{width:78px;accent-color:#7540db;cursor:pointer}
-#md2-buddy .mb-speed output{min-width:20px;text-align:right}
+#md2-buddy .mb-speed{position:absolute;left:calc(100% + 5px);right:auto;bottom:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 5px;border-radius:15px;background:#fffefef0;border:1px solid #bca3f4;box-shadow:0 4px 14px #3820562b;color:#5631a0;font:600 11px system-ui,sans-serif;white-space:nowrap}
+#md2-buddy .mb-speed input{width:16px;height:82px;writing-mode:vertical-lr;direction:rtl;accent-color:#7540db;cursor:pointer}
+#md2-buddy .mb-speed output{min-width:20px;text-align:center}
 #md2-buddy:has(#md2-buddy-panel:not([hidden])) .mb-speed{display:none}
-@media(max-width:480px){#md2-buddy .mb-speed{bottom:85px;right:0;padding:4px 6px}#md2-buddy .mb-speed input{width:65px}}
+@media(max-width:480px){#md2-buddy .mb-speed{bottom:0;left:calc(100% + 3px);padding:5px 3px;gap:3px}#md2-buddy .mb-speed input{width:14px;height:62px}}
 /* Roaming stays within the viewport; chat returns to its original dock. */
 #md2-buddy{transition:transform 5.2s linear}
 #md2-buddy .mb-roam-emote{position:absolute;bottom:82px;right:16px;font-size:38px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;filter:drop-shadow(0 3px 6px #27154855)}
