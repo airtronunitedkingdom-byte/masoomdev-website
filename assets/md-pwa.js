@@ -1,0 +1,1 @@
+(()=>{if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));const m=document.createElement('link');m.rel='manifest';m.href='/manifest.webmanifest';document.head.append(m);})();
