@@ -1,8 +1,8 @@
 /* MasoomDev desktop navigation preview — mobile-style drawer on desktop only. */
-(()=>{'use strict';function init(){const header=document.querySelector('header');if(!header||header.querySelector('#md-desktop-menu-button'))return;const bar=header.querySelector('.shell.nav,.md-header-inner,.nav,.header-inner')||header;const existing=header.querySelector('nav.links,nav.md-nav-links,nav[aria-label="Main navigation"]');if(!existing)return;
+(()=>{'use strict';function init(){const header=document.querySelector('header');if(!header||header.querySelector('#md-desktop-menu-button'))return;const bar=header.querySelector('.shell.nav,.md-header-inner,.nav,.header-inner')||header;const existing=header.querySelector('nav.links,nav.md-nav-links,nav[aria-label="Main navigation"],nav');
 const css=document.createElement('style');css.textContent=`
 @media(min-width:900px){
-header.md-desktop-nav-ready nav.links,header.md-desktop-nav-ready nav.md-nav-links,header.md-desktop-nav-ready nav[aria-label="Main navigation"]{display:none!important}
+header.md-desktop-nav-ready nav:not(.md-desktop-menu-panel){display:none!important}
 header.md-desktop-nav-ready .md-desktop-menu-button{display:flex!important}
 header.md-desktop-nav-ready .md-desktop-menu-wrap{margin-left:auto;position:relative;z-index:10010}
 header.md-desktop-nav-ready .md-desktop-menu-panel{position:absolute;right:0;top:calc(100% + 12px);width:min(310px,calc(100vw - 32px));max-height:min(75vh,650px);overflow-y:auto;padding:10px;border:1px solid #b8a9df55;border-radius:19px;background:var(--md-surface,#fff);color:var(--md-text,#29213c);box-shadow:0 16px 44px #1b0e3d30;display:grid;gap:3px}
