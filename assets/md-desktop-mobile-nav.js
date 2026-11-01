@@ -9,6 +9,21 @@
 #md-universal-header #md-u-panel[hidden]{display:none!important}#md-universal-header #md-u-panel a{display:block!important;padding:11px 12px!important;color:#34234c!important;text-decoration:none!important;border-radius:9px!important;font-size:14px!important}#md-universal-header #md-u-panel a:hover,#md-universal-header #md-u-panel a[aria-current="page"]{background:#efe8ff!important}
 html[data-md-theme="dark"] #md-universal-header{background:#151022!important;color:#fff!important;border-color:#403255!important}html[data-md-theme="dark"] #md-universal-header .md-u-brand{color:#fff!important}html[data-md-theme="dark"] #md-universal-header button{background:#2d2043!important;color:#fff!important;border-color:#5e497a!important}html[data-md-theme="dark"] #md-universal-header #md-u-panel{background:#20172f!important;color:#fff!important}html[data-md-theme="dark"] #md-universal-header #md-u-panel a{color:#fff!important}html[data-md-theme="dark"] #md-universal-header #md-u-panel a:hover{background:#3b2956!important}
 @media(max-width:420px){#md-universal-header{padding:10px 12px!important}#md-universal-header .md-u-brand{font-size:15px!important}#md-universal-header .md-u-logo{width:33px;height:33px}#md-universal-header .md-u-actions{gap:5px}#md-universal-header button{padding:9px!important;font-size:12px!important}}
+
+/* Shared dark-mode readability: all pages using the universal navigation. */
+html[data-md-theme="dark"]{color-scheme:dark;--md-input-bg:#211b32;--md-input-text:#f8f5ff;--md-input-border:#786a95;--md-input-placeholder:#b9afce}
+html[data-md-theme="dark"] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="button"]):not([type="submit"]):not([type="reset"]),textarea,select){
+ background:var(--md-input-bg)!important;color:var(--md-input-text)!important;border-color:var(--md-input-border)!important;caret-color:#d7baff!important}
+html[data-md-theme="dark"] :is(input,textarea)::placeholder{color:var(--md-input-placeholder)!important;opacity:1!important}
+html[data-md-theme="dark"] :is(input,textarea,select):disabled{opacity:.65}
+html[data-md-theme="dark"] :is(input,textarea,select):focus-visible{outline:2px solid #bd9bff!important;outline-offset:2px}
+html[data-md-theme="dark"] select option{background:#211b32!important;color:#f8f5ff!important}
+html[data-md-theme="dark"] :is(pre,code,output,[role="textbox"],[contenteditable="true"],.output,.result,.output-box,.result-box,.text-output,.code-output){
+ color:#f4efff!important;border-color:#64577f!important}
+html[data-md-theme="dark"] :is(pre,output,[role="textbox"],[contenteditable="true"],.output,.result,.output-box,.result-box,.text-output,.code-output){
+ background:#241e36!important}
+html[data-md-theme="dark"] :is(.output,.result,.output-box,.result-box,.text-output,.code-output) :is(p,span,div,small,strong){color:inherit}
+html[data-md-theme="dark"] :is(input,textarea,select,pre,output,[role="textbox"],[contenteditable="true"],.output,.result,.output-box,.result-box,.text-output,.code-output)::selection{background:#7852b5;color:#fff}
 `;document.head.appendChild(css);if(old)old.replaceWith(h);else document.body.insertBefore(h,document.body.firstChild);
 const links=[['Home','/'],['Our Apps','/apps/'],['HTML Tools','/tools/'],['Games','/games/'],['Extensions','/extensions/'],['About','/about/'],['Privacy','/privacy/'],['Support','/support/'],['Terms','/terms/']];const panel=h.querySelector('#md-u-panel');for(const [name,url] of links){const x=document.createElement('a');x.href=url;x.textContent=name;if(location.pathname.replace(/index\.html$/,'')===url)x.setAttribute('aria-current','page');panel.appendChild(x)}
 const menu=h.querySelector('.md-u-menu-button');function close(){panel.hidden=true;menu.setAttribute('aria-expanded','false');menu.textContent='☰ Menu'}menu.addEventListener('click',()=>{const open=panel.hidden;panel.hidden=!open;menu.setAttribute('aria-expanded',String(open));menu.textContent=open?'✕ Close':'☰ Menu'});document.addEventListener('pointerdown',e=>{if(!h.querySelector('.md-u-menu').contains(e.target))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
