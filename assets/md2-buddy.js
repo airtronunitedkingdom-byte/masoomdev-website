@@ -1,6 +1,6 @@
 /* Masoom Buddy 2.0 — animated local guide. No AI API, tracking or account required. */
 (()=>{'use strict';
-const robot='<svg class="mb-robot" viewBox="0 0 100 100" role="img" aria-label="Smiling purple robot"><defs><linearGradient id="mb-shell" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c8b7ff"/></linearGradient></defs><path d="M50 17V9" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round"/><circle cx="50" cy="8" r="5" fill="#c084fc"/><rect x="12" y="22" width="76" height="63" rx="26" fill="url(#mb-shell)" stroke="#8c65e8" stroke-width="3"/><rect x="20" y="31" width="60" height="43" rx="17" fill="#211641"/><ellipse cx="38" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><ellipse cx="62" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><path d="M41 63q9 9 18 0" fill="none" stroke="#c6a6ff" stroke-width="4" stroke-linecap="round"/><circle cx="19" cy="68" r="6" fill="#f9a8d4"/><circle cx="81" cy="68" r="6" fill="#f9a8d4"/></svg>';
+const robot='<svg class="mb-robot" viewBox="0 0 100 100" role="img" aria-label="Smiling purple robot"><defs><linearGradient id="mb-shell" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c8b7ff"/></linearGradient></defs><g class="mb-antenna"><path d="M50 17V9" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round"/><circle cx="50" cy="8" r="5" fill="#c084fc"/></g><rect x="12" y="22" width="76" height="63" rx="26" fill="url(#mb-shell)" stroke="#8c65e8" stroke-width="3"/><rect x="20" y="31" width="60" height="43" rx="17" fill="#211641"/><ellipse cx="38" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><ellipse cx="62" cy="50" rx="7" ry="9" fill="#7cecff" class="mb-eye"/><path d="M41 63q9 9 18 0" fill="none" stroke="#c6a6ff" stroke-width="4" stroke-linecap="round"/><circle class="mb-cheek" cx="19" cy="68" r="6" fill="#f9a8d4"/><circle class="mb-cheek" cx="81" cy="68" r="6" fill="#f9a8d4"/></svg>';
 const css=document.createElement('style');css.textContent=`
 #md2-buddy{position:fixed;right:18px;bottom:18px;z-index:9000;font:14px/1.5 system-ui,sans-serif;color:#24183f}#md2-buddy *{box-sizing:border-box}
 #md2-buddy-launch{width:76px;height:76px;border-radius:50%;border:3px solid white;background:linear-gradient(145deg,#ad86ff,#6735d9);box-shadow:0 9px 30px #5630b66e;cursor:pointer;display:grid;place-items:center;animation:mb-float 3.5s ease-in-out infinite}
@@ -12,6 +12,24 @@ const css=document.createElement('style');css.textContent=`
 @keyframes mb-float{0%,100%{translate:0 0}50%{translate:0 -7px}}@keyframes mb-blink{0%,44%,48%,100%{scale:1 1}46%{scale:1 .15}}
 @media(max-width:480px){#md2-buddy{right:12px;bottom:12px}#md2-buddy-launch{width:62px;height:62px}#md2-buddy-launch .mb-robot{width:52px;height:52px}#md2-buddy-panel{bottom:74px;height:min(530px,70dvh)}.mb-prompt{display:none}}
 @media(prefers-reduced-motion:reduce){#md2-buddy-launch,.mb-eye{animation:none!important}}
+/* Lightweight Buddy personality: breathing glow, antenna pulse, gentle tilt, cheek shimmer. */
+#md2-buddy-launch{position:relative;isolation:isolate;transition:box-shadow .3s ease,background .3s ease;animation:mb-float 3.5s ease-in-out infinite,mb-glow 5s ease-in-out infinite}
+#md2-buddy-launch:before{content:"";position:absolute;inset:-7px;border:2px solid #a78bfa70;border-radius:50%;z-index:-1;pointer-events:none;animation:mb-ring 4.8s ease-out infinite}
+#md2-buddy-launch .mb-robot{animation:mb-tilt 7s ease-in-out infinite;transform-origin:50% 70%}
+#md2-buddy-launch .mb-antenna{animation:mb-antenna 2.7s ease-in-out infinite;transform-origin:50px 17px}
+#md2-buddy-launch .mb-cheek{animation:mb-cheeks 5s ease-in-out infinite}
+#md2-buddy-launch:hover{animation:mb-glow 2s ease-in-out infinite}
+#md2-buddy-launch:hover .mb-robot{animation:mb-wave .8s ease-in-out infinite alternate}
+#md2-buddy-launch:active .mb-robot{transform:scale(.92)}
+#md2-buddy-launch[aria-expanded="true"]:before{animation:none;opacity:0}
+@keyframes mb-glow{0%,100%{box-shadow:0 9px 30px #5630b66e}50%{box-shadow:0 11px 38px #8b5cf6a8,0 0 13px #a78bfa55}}
+@keyframes mb-ring{0%{transform:scale(.88);opacity:0}18%{opacity:.7}70%,100%{transform:scale(1.22);opacity:0}}
+@keyframes mb-tilt{0%,42%,100%{transform:rotate(0)}48%{transform:rotate(-9deg)}54%{transform:rotate(6deg)}60%{transform:rotate(0)}}
+@keyframes mb-wave{from{transform:rotate(-10deg) scale(1.02)}to{transform:rotate(10deg) scale(1.08)}}
+@keyframes mb-antenna{0%,100%{transform:rotate(0)}45%{transform:rotate(13deg)}65%{transform:rotate(-8deg)}}
+@keyframes mb-cheeks{0%,100%{opacity:.85}50%{opacity:1;filter:brightness(1.25)}}
+@media(prefers-reduced-motion:reduce){#md2-buddy-launch,#md2-buddy-launch:before,#md2-buddy-launch .mb-robot,#md2-buddy-launch .mb-antenna,#md2-buddy-launch .mb-cheek{animation:none!important;transition:none!important}}
+
 `;document.head.appendChild(css);
 function init(){if(document.querySelector('#md2-buddy'))return;
 const root=document.createElement('aside');root.id='md2-buddy';root.setAttribute('aria-label','Masoom Buddy website guide');
