@@ -30,16 +30,40 @@ const css=document.createElement('style');css.textContent=`
 @keyframes mb-cheeks{0%,100%{opacity:.85}50%{opacity:1;filter:brightness(1.25)}}
 @media(prefers-reduced-motion:reduce){#md2-buddy-launch,#md2-buddy-launch:before,#md2-buddy-launch .mb-robot,#md2-buddy-launch .mb-antenna,#md2-buddy-launch .mb-cheek{animation:none!important;transition:none!important}}
 
+
+/* Roaming stays within the viewport; chat returns to its original dock. */
+#md2-buddy{transition:transform 3.8s cubic-bezier(.45,.05,.45,1)}
+#md2-buddy .mb-roam-emote{position:absolute;bottom:82px;right:16px;font-size:28px;pointer-events:none;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;filter:drop-shadow(0 3px 6px #27154855)}
+#md2-buddy .mb-roam-emote.mb-visible{opacity:1;transform:translateY(-8px)}
+@media(prefers-reduced-motion:reduce){#md2-buddy{transition:none!important}}
 `;document.head.appendChild(css);
 function init(){if(document.querySelector('#md2-buddy'))return;
 const root=document.createElement('aside');root.id='md2-buddy';root.setAttribute('aria-label','Masoom Buddy website guide');
 root.innerHTML='<div class="mb-prompt" id="mb-prompt">Need help? Ask me! ✨</div><section id="md2-buddy-panel" role="dialog" aria-label="Chat with Masoom Buddy" hidden><div class="mb-head">'+robot+'<div><strong>Masoom Buddy ✨</strong><small>Your friendly website guide · local replies</small></div><button class="mb-close" type="button" aria-label="Close chat">×</button></div><div class="mb-chat" id="mb-chat" aria-live="polite"></div><div class="mb-chips"><button type="button" data-ask="Recommend an app">📱 Apps</button><button type="button" data-ask="Find a tool">🛠️ Tools</button><button type="button" data-ask="Play a game">🎮 Games</button><button type="button" data-ask="What is this page?">📍 This page</button></div><form class="mb-form"><input aria-label="Message Masoom Buddy" placeholder="Ask about apps, games or tools..." maxlength="250" autocomplete="off"><button type="submit">Send</button></form></section><button id="md2-buddy-launch" type="button" aria-label="Open Masoom Buddy" aria-expanded="false" aria-controls="md2-buddy-panel">'+robot+'</button>';
-document.body.appendChild(root);
+document.body.appendChild(root);const emote=document.createElement('span');emote.className='mb-roam-emote';emote.setAttribute('aria-hidden','true');root.appendChild(emote);
 const panel=root.querySelector('#md2-buddy-panel'),chat=root.querySelector('#mb-chat'),launch=root.querySelector('#md2-buddy-launch'),input=root.querySelector('input');
 const items=[{terms:/video|movie|player|audio|music/i,name:'MH Player',desc:'An offline video and audio player for Android.',url:'/apps/mh-player/'},{terms:/auth|2fa|otp|password|security/i,name:'Easy Authenticator',desc:'Explore the authenticator app and its features.',url:'/apps/easy-authenticator/'},{terms:/snip|ocr|screenshot|extract|text capture/i,name:'Snip & Extract',desc:'Capture screenshots and extract text on Windows.',url:'/apps/snip-extract/'},{terms:/unit|convert|length|weight|temperature/i,name:'Unit Converter',desc:'Convert everyday measurements in your browser.',url:'/tools/unit-converter/'},{terms:/age|birthday/i,name:'Age Calculator',desc:'Calculate age using the online tool.',url:'/tools/age-calculator/'},{terms:/loan|emi|interest/i,name:'Loan Calculator',desc:'Estimate payments using the calculator.',url:'/tools/loan-calculator/'},{terms:/game|play|fun|snake|puzzle/i,name:'Games',desc:'Find free browser games to play.',url:'/games/'},{terms:/extension|browser add/i,name:'Extensions',desc:'Browse helpful browser extensions.',url:'/extensions/'},{terms:/tool|calculator|utility/i,name:'Free Tools',desc:'Explore free online utilities.',url:'/tools/'},{terms:/app|android|windows|download/i,name:'Our Apps',desc:'Browse Android and Windows applications.',url:'/apps/'}];
 function bubble(message,who='bot',url){const el=document.createElement('div');el.className='mb-bubble '+who;el.textContent=message;if(url){const link=document.createElement('a');link.href=url;link.textContent='Open page →';el.append(document.createElement('br'),link)}chat.appendChild(el);chat.scrollTop=chat.scrollHeight}
 function reply(q){bubble(q,'user');const text=q.toLowerCase();let item=items.find(x=>x.terms.test(q));if(/this page|where am i|current page/i.test(q)){bubble('You are on '+document.title+'. I can help you find related apps, tools and games.');return}if(/hello|hi|hey|salam/i.test(text)){bubble('Hello! 👋 I’m Masoom Buddy. Tell me what you need: an app, a game, a converter or another tool.');return}if(item){bubble('I think '+item.name+' could help! '+item.desc,item.url?'bot':'bot',item.url)}else{bubble('I can guide you around MasoomDev, but I am not a live AI chatbot yet. Try asking for a video player, OCR, unit converter, calculator, apps or games.');}}
-function setOpen(open){panel.hidden=!open;launch.setAttribute('aria-expanded',String(open));root.querySelector('#mb-prompt').hidden=open;if(open){if(!chat.children.length)bubble('Hi! 👋 I’m Masoom Buddy. Tell me what you want to do and I’ll suggest a page that fits.');input.focus()}else launch.focus()}
+let roamTimer=null,emoteTimer=null,roamPaused=false;
+const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+function dock(){root.style.transform='translate(0px,0px)';emote.classList.remove('mb-visible')}
+function roam(){if(roamPaused||!panel.hidden||motion.matches||document.hidden||window.innerWidth<700){dock();return}
+ const size=launch.getBoundingClientRect().width||76;
+ const maxX=Math.max(0,window.innerWidth-size-32),maxY=Math.max(0,window.innerHeight-size-42);
+ const x=16+Math.random()*maxX-(window.innerWidth-size-18);
+ const y=16+Math.random()*maxY-(window.innerHeight-size-18);
+ root.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
+ emote.textContent=['👋','💜','✨','😊','🎉','🤖','⭐'][Math.floor(Math.random()*7)];
+ emote.classList.add('mb-visible');clearTimeout(emoteTimer);emoteTimer=setTimeout(()=>emote.classList.remove('mb-visible'),1800);
+}
+roamTimer=setInterval(roam,9500);
+root.addEventListener('pointerenter',()=>{roamPaused=true});
+root.addEventListener('pointerleave',()=>{roamPaused=false});
+window.addEventListener('resize',dock,{passive:true});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)dock()});
+setTimeout(roam,5000);
+function setOpen(open){if(open)dock();panel.hidden=!open;launch.setAttribute('aria-expanded',String(open));root.querySelector('#mb-prompt').hidden=open;if(open){if(!chat.children.length)bubble('Hi! 👋 I’m Masoom Buddy. Tell me what you want to do and I’ll suggest a page that fits.');input.focus()}else launch.focus()}
 launch.addEventListener('click',()=>setOpen(panel.hidden));root.querySelector('.mb-close').addEventListener('click',()=>setOpen(false));root.querySelectorAll('[data-ask]').forEach(b=>b.addEventListener('click',()=>reply(b.dataset.ask)));root.querySelector('.mb-form').addEventListener('submit',e=>{e.preventDefault();const q=input.value.trim();if(!q)return;input.value='';reply(q)});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)setOpen(false)});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
