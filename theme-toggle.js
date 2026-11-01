@@ -3,7 +3,7 @@
   var key = 'masoomdev-theme';
   var root = document.documentElement;
   var css = `
-    #md-theme-toggle{position:fixed;right:20px;bottom:20px;z-index:9999;display:flex;align-items:center;gap:9px;padding:12px 16px;border:1px solid #a78bfa80;border-radius:999px;background:#24203d;color:#fff;box-shadow:0 8px 28px #0005;font:700 14px system-ui,sans-serif;cursor:pointer}
+    #md-theme-toggle{position:static;z-index:20;display:flex;align-items:center;gap:9px;padding:12px 16px;border:1px solid #a78bfa80;border-radius:999px;background:#24203d;color:#fff;box-shadow:0 8px 28px #0005;font:700 14px system-ui,sans-serif;cursor:pointer}
     #md-theme-toggle:hover{transform:translateY(-2px)}
     #md-theme-toggle:focus-visible{outline:3px solid #a78bfa;outline-offset:3px}
     html[data-md-theme="light"]{background:#f7f8fc!important;color:#182235!important;color-scheme:light}
@@ -19,7 +19,7 @@
     html[data-md-theme="light"] .eyebrow,html[data-md-theme="light"] .pill{color:#5642ae!important}
     html[data-md-theme="light"] .gradient{color:#6748d7!important;background:none!important}
     html[data-md-theme="light"] #md-theme-toggle{background:#fff;color:#182235;border-color:#c5bde8;box-shadow:0 8px 24px #18223524}
-    @media(max-width:600px){#md-theme-toggle{right:14px;bottom:14px;padding:11px 14px;font-size:13px}}
+    @media(max-width:600px){#md-theme-toggle{padding:10px 12px;font-size:13px}}
     @media(prefers-reduced-motion:no-preference){#md-theme-toggle{transition:transform .2s,background .2s}}
   `;
   var style = document.createElement('style');
@@ -47,7 +47,8 @@
       try { localStorage.setItem(key, theme); } catch (_) {}
       apply(theme);
     });
-    document.body.appendChild(button);
+    var header = document.querySelector('header .md-header-inner,header .nav,header .header-inner,header .shell,header');
+    if (header) { header.appendChild(button); header.style.display='flex'; header.style.alignItems='center'; header.style.flexWrap='wrap'; header.style.gap='12px'; } else document.body.appendChild(button);
     apply(theme);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
