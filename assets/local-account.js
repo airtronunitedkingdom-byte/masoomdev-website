@@ -6,7 +6,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"
 const normalize=href=>{const u=new URL(href,location.origin);if(u.origin!==location.origin)return null;if(!["/games/","/tools/","/apps/","/extensions/","/seo-tools/"].some(p=>u.pathname.startsWith(p)))return null;return u.pathname+u.search};
 const linkOK=(platform,value)=>{try{const u=new URL(value);if(u.protocol!=="https:")return false;const h=u.hostname.toLowerCase();return ALLOWED[platform].some(d=>h===d||h==="www."+d||h==="m."+d)&&!u.username&&!u.password}catch{return false}};
 const css=document.createElement("style");css.textContent=`
-#mdAccountBtn{position:fixed;right:14px;bottom:15px;z-index:9000;background:#5b48c8;color:#fff;border:1px solid #bcb4ef;border-radius:24px;padding:10px 16px;box-shadow:0 4px 20px #0004;font:700 13px system-ui;cursor:pointer}
+#mdAccountBtn{position:fixed;right:108px;bottom:18px;z-index:9000;background:#5b48c8;color:#fff;border:1px solid #bcb4ef;border-radius:24px;padding:10px 16px;box-shadow:0 4px 20px #0004;font:700 13px system-ui;cursor:pointer}
 .mdFav{position:absolute;right:10px;top:10px;z-index:2;border:1px solid #bbb2e9;background:#fff;color:#5942ba;border-radius:100%;width:34px;height:34px;cursor:pointer;font-size:20px;line-height:1}
 .mdFav[aria-pressed=true]{color:#e19b00;background:#fff6d7}
 #mdAccountOverlay[hidden]{display:none!important}#mdAccountOverlay{position:fixed;inset:0;z-index:100000;background:#080d19c9;display:grid;place-items:center;padding:15px;font:14px system-ui;color:#1d2945}
@@ -23,7 +23,7 @@ const css=document.createElement("style");css.textContent=`
 #mdAccountPanel .mdError{color:#b72d3c;font-weight:700;min-height:20px}
 #mdAccountPanel .mdFavItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e4e8f0}
 #mdAccountPanel a{color:#4f3cba;text-decoration:underline;overflow-wrap:anywhere}
-@media(max-width:500px){#mdAccountPanel{padding:14px}#mdAccountPanel .mdSocialRow{grid-template-columns:90px 1fr}#mdAccountBtn{bottom:9px;right:9px}}
+@media(max-width:500px){#mdAccountPanel{padding:14px}#mdAccountPanel .mdSocialRow{grid-template-columns:90px 1fr}#mdAccountBtn{bottom:12px;right:88px;padding:9px 11px;font-size:12px}}
 `;document.head.appendChild(css);
 const trigger=document.createElement("button");trigger.id="mdAccountBtn";trigger.type="button";trigger.textContent="👤 Sign In";document.body.appendChild(trigger);
 const overlay=document.createElement("div");overlay.id="mdAccountOverlay";overlay.hidden=true;overlay.innerHTML='<section id="mdAccountPanel" role="dialog" aria-modal="true" aria-label="MasoomDev local account"></section>';document.body.appendChild(overlay);
