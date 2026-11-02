@@ -46,7 +46,7 @@ function setupDirectoryControls(){
  .md-directory-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:18px 0 20px;padding:16px;border:1px solid #dcd5ed;border-radius:15px;background:#f8f6ff;color:#28203c}
  .md-directory-controls label{display:grid;gap:5px;font-size:13px;font-weight:700;flex:1 1 160px;min-width:0}
  .md-directory-controls input,.md-directory-controls select{width:100%;box-sizing:border-box;padding:10px 12px;min-height:42px;border-radius:9px;border:1px solid #b9afd0;background:#fff;color:#261c3d;font:inherit}
- .md-directory-count{flex:1 1 100%;font-size:12px;opacity:.8}
+ .md-directory-reset{min-height:42px;padding:9px 14px;border:1px solid #a58acb;border-radius:9px;background:#fff;color:#503080;font:700 13px system-ui;cursor:pointer}.md-directory-reset:hover{background:#efe8ff}.md-directory-reset:focus-visible{outline:3px solid #8655d6;outline-offset:2px}html[data-md-theme="dark"] .md-directory-reset{background:#302444;color:#f6f1ff;border-color:#82739c}\n .md-directory-count{flex:1 1 100%;font-size:12px;opacity:.8}
  .md-directory-empty{padding:16px;text-align:center;border:1px dashed #9585b6;border-radius:12px;margin:12px 0}
  html[data-md-theme="dark"] .md-directory-controls{background:#241d36;color:#f6f1ff;border-color:#65577d}
  html[data-md-theme="dark"] .md-directory-controls input,html[data-md-theme="dark"] .md-directory-controls select{background:#191426!important;color:#f6f1ff!important;border-color:#82739c!important}
@@ -59,7 +59,7 @@ function setupDirectoryControls(){
   const searchLabel=document.createElement('label');searchLabel.textContent='Search';const search=document.createElement('input');search.type='search';search.placeholder='Search by name or description';search.setAttribute('aria-label','Search items');searchLabel.appendChild(search);bar.appendChild(searchLabel);
   let filter=null;
   if(cfg.categories.length){const label=document.createElement('label');label.textContent='Filter';filter=document.createElement('select');filter.setAttribute('aria-label','Filter by category');cfg.categories.forEach(([name,value])=>{const o=document.createElement('option');o.value=value;o.textContent=name;filter.appendChild(o)});label.appendChild(filter);bar.appendChild(label)}
-  const sortLabel=document.createElement('label');sortLabel.textContent='Sort by';const sort=document.createElement('select');[['default','Default order'],['az','Name: A to Z'],['za','Name: Z to A'],['latest','Latest added'],['oldest','Oldest added']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sort.appendChild(o)});sortLabel.appendChild(sort);bar.appendChild(sortLabel);
+  const sortLabel=document.createElement('label');sortLabel.textContent='Sort by';const sort=document.createElement('select');[['default','Default order'],['az','Name: A to Z'],['za','Name: Z to A'],['latest','Latest added'],['oldest','Oldest added']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;sort.appendChild(o)});sortLabel.appendChild(sort);bar.appendChild(sortLabel);const reset=document.createElement('button');reset.type='button';reset.className='md-directory-reset';reset.textContent='Reset';reset.setAttribute('aria-label','Reset search, filter and sorting');bar.appendChild(reset);
   const count=document.createElement('div');count.className='md-directory-count';count.setAttribute('aria-live','polite');bar.appendChild(count);
   const empty=document.createElement('p');empty.className='md-directory-empty';empty.hidden=true;empty.textContent='No matching items found. Try a different search or filter.';
   grid.before(bar);grid.after(empty);
@@ -72,7 +72,7 @@ function setupDirectoryControls(){
    visible.forEach(x=>grid.appendChild(x.el));
    count.textContent=visible.length+' of '+data.length+' items';empty.hidden=visible.length!==0;
   }
-  search.addEventListener('input',apply);filter?.addEventListener('change',apply);sort.addEventListener('change',apply);apply();
+  search.addEventListener('input',apply);filter?.addEventListener('change',apply);sort.addEventListener('change',apply);reset.addEventListener('click',()=>{search.value='';if(filter)filter.value='';sort.value='default';apply();search.focus()});document.addEventListener('keydown',e=>{if(e.key!=='/'||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;e.preventDefault();search.focus()});apply();
  });
 }
 setupDirectoryControls();
