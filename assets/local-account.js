@@ -6,7 +6,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"
 const normalize=href=>{const u=new URL(href,location.origin);if(u.origin!==location.origin)return null;if(!["/games/","/tools/","/apps/","/extensions/","/seo-tools/"].some(p=>u.pathname.startsWith(p)))return null;return u.pathname+u.search};
 const linkOK=(platform,value)=>{try{const u=new URL(value);if(u.protocol!=="https:")return false;const h=u.hostname.toLowerCase();return ALLOWED[platform].some(d=>h===d||h==="www."+d||h==="m."+d)&&!u.username&&!u.password}catch{return false}};
 const css=document.createElement("style");css.textContent=`
-#mdAccountBtn{position:fixed;right:180px;bottom:18px;z-index:9000;background:#5b48c8;color:#fff;border:1px solid #bcb4ef;border-radius:24px;padding:10px 16px;box-shadow:0 4px 20px #0004;font:700 13px system-ui;cursor:pointer}
+#mdAccountBtn{display:none!important;position:fixed;right:180px;bottom:18px;z-index:9000;background:#5b48c8;color:#fff;border:1px solid #bcb4ef;border-radius:24px;padding:10px 16px;box-shadow:0 4px 20px #0004;font:700 13px system-ui;cursor:pointer}
 .mdFav{position:absolute;right:10px;top:10px;z-index:2;border:1px solid #bbb2e9;background:#fff;color:#5942ba;border-radius:100%;width:34px;height:34px;cursor:pointer;font-size:20px;line-height:1}
 .mdFav[aria-pressed=true]{color:#e19b00;background:#fff6d7}
 #mdAccountOverlay[hidden]{display:none!important}#mdAccountOverlay{position:fixed;inset:0;z-index:100000;background:#080d19c9;display:grid;place-items:center;padding:15px;font:14px system-ui;color:#1d2945}
