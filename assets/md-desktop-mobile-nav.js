@@ -39,11 +39,16 @@ function setupDirectoryControls(){
  '/apps/':{hub:'main',grid:'.cards',item:'.card',title:'h3',categories:[]}
  };
  const cfg=configs[path];if(!cfg)return;
+ /* Recently opened items stay on this device only; no account or network calls. */
+ const recentKey='md2-recent-items-v1';
+ function readRecent(){try{const x=JSON.parse(localStorage.getItem(recentKey)||'[]');return Array.isArray(x)?x.filter(v=>v&&typeof v.name==='string'&&typeof v.url==='string'&&v.url.startsWith('/')&&!v.url.startsWith('//')).slice(0,8):[]}catch{return []}}
+ function saveRecent(items){try{localStorage.setItem(recentKey,JSON.stringify(items.slice(0,8)))}catch{}}
+
  const hub=document.querySelector(cfg.hub);if(!hub)return;
  const grids=[...hub.querySelectorAll(cfg.grid)].filter(g=>g.querySelector(cfg.item));
  if(!grids.length)return;
  const style=document.createElement('style');style.textContent=`
- .md-directory-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:18px 0 20px;padding:16px;border:1px solid #dcd5ed;border-radius:15px;background:#f8f6ff;color:#28203c}
+ .md-recent-items{margin:12px 0;padding:12px 14px;border:1px solid #dcd5ed;border-radius:12px;background:#faf8ff;color:#34234c}.md-recent-items[hidden]{display:none!important}.md-recent-links{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}.md-recent-links a{padding:7px 10px;border-radius:8px;background:#ece3ff;color:#40216f;text-decoration:none;font:600 13px system-ui}.md-recent-links a:hover{text-decoration:underline}.md-recent-clear{border:0;background:transparent;color:#6840a0;text-decoration:underline;cursor:pointer;padding:3px;font:600 12px system-ui}html[data-md-theme="dark"] .md-recent-items{background:#241d36;color:#f6f1ff;border-color:#65577d}html[data-md-theme="dark"] .md-recent-links a{background:#403052;color:#fff}html[data-md-theme="dark"] .md-recent-clear{color:#d8bcff}\n .md-directory-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:18px 0 20px;padding:16px;border:1px solid #dcd5ed;border-radius:15px;background:#f8f6ff;color:#28203c}
  .md-directory-controls label{display:grid;gap:5px;font-size:13px;font-weight:700;flex:1 1 160px;min-width:0}
  .md-directory-controls input,.md-directory-controls select{width:100%;box-sizing:border-box;padding:10px 12px;min-height:42px;border-radius:9px;border:1px solid #b9afd0;background:#fff;color:#261c3d;font:inherit}
  .md-directory-reset{min-height:42px;padding:9px 14px;border:1px solid #a58acb;border-radius:9px;background:#fff;color:#503080;font:700 13px system-ui;cursor:pointer}.md-directory-reset:hover{background:#efe8ff}.md-directory-reset:focus-visible{outline:3px solid #8655d6;outline-offset:2px}html[data-md-theme="dark"] .md-directory-reset{background:#302444;color:#f6f1ff;border-color:#82739c}\n .md-directory-count{flex:1 1 100%;font-size:12px;opacity:.8}
@@ -64,6 +69,14 @@ function setupDirectoryControls(){
   const empty=document.createElement('p');empty.className='md-directory-empty';empty.hidden=true;empty.textContent='No matching items found. Try a different search or filter.';
   grid.before(bar);grid.after(empty);
   const data=cards.map((el,index)=>({el,index,name:(el.querySelector(cfg.title)?.textContent||'').trim(),text:el.textContent.toLowerCase(),link:(el.querySelector('a[href]')||el).getAttribute('href')||''}));
+  const recentBox=document.createElement('section');recentBox.className='md-recent-items';recentBox.setAttribute('aria-label','Recently opened');
+  const recentTitle=document.createElement('strong');recentTitle.textContent='Recently opened';recentBox.appendChild(recentTitle);
+  const recentLinks=document.createElement('div');recentLinks.className='md-recent-links';recentBox.appendChild(recentLinks);
+  const clearRecent=document.createElement('button');clearRecent.type='button';clearRecent.textContent='Clear history';clearRecent.className='md-recent-clear';recentBox.appendChild(clearRecent);
+  function showRecent(){recentLinks.replaceChildren();const items=readRecent();recentBox.hidden=!items.length;items.forEach(item=>{const link=document.createElement('a');link.href=item.url;link.textContent=item.name;recentLinks.appendChild(link)})}
+  clearRecent.addEventListener('click',()=>{saveRecent([]);showRecent()});
+  bar.before(recentBox);showRecent();
+  data.forEach(item=>{const link=item.el.querySelector('a[href]');if(!link)return;link.addEventListener('click',()=>{try{const url=new URL(link.href,location.href);if(url.origin!==location.origin)return;const entry={name:item.name||link.textContent.trim(),url:url.pathname+url.search};saveRecent([entry,...readRecent().filter(v=>v.url!==entry.url)]);showRecent()}catch{}})});
   function apply(){
    const q=search.value.trim().toLowerCase(),category=filter?.value||'';
    const visible=data.filter(x=>(!q||x.text.includes(q))&&(!category||category.split('|').some(k=>(x.name+' '+x.link).toLowerCase().includes(k))));
