@@ -26,3 +26,5 @@ Cloudflare's *production branch* here refers only to the separate Cloudflare pre
 - No DNS, custom-domain, Supabase, or Vercel configuration changes.
 - No changes to `main` and no Vercel production deployment requested.
 - Do not use this preview branch for production cutover.
+
+<!-- Cloudflare deployment refresh: 2026-11-06 AdSense verification rollout; no functional changes. -->
