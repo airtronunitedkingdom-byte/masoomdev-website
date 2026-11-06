@@ -6,7 +6,7 @@
   function start() {
     var cfg = window.MasoomDevAds;
     if (!cfg || cfg.enabled !== true) return;
-    if (!/^ca-pub-\\d{16}$/.test(cfg.publisherId || "")) {
+    if (!/^ca-pub-\d{16}$/.test(cfg.publisherId || "")) {
       console.warn("[MasoomDev Ads] Publisher ID is missing or invalid; ads remain off.");
       return;
     }
@@ -15,7 +15,7 @@
     slots.forEach(function (host) {
       var key = host.getAttribute("data-md-ad-slot");
       var id = cfg.slots && cfg.slots[key];
-      if (!/^\\d{10}$/.test(id || "")) return;
+      if (!/^\d{10}$/.test(id || "")) return;
       ready.push({host:host,id:id});
     });
     if (!ready.length) return;
