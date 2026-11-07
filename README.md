@@ -31,3 +31,5 @@ App URL: `/apps/your-slug` and privacy policy URL: `/apps/your-slug/privacy`.
 The website is currently configured with no published apps; sample apps are not shown as real releases. General website privacy text is not a substitute for app-specific disclosures. Verify hosting logs, advertising, analytics, SDK data collection and Google Play Data safety answers before publication.
 
 Support: airtron68@gmail.com
+
+<!-- Cloudflare production redeploy requested 2026-11-07; no website behavior changed. -->
