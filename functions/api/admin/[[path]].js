@@ -43,7 +43,17 @@ export async function onRequest({request,env}){
   const slug=url.searchParams.get('slug');if(!/^[a-z0-9-]{1,90}$/.test(slug||''))return json({error:'Invalid slug'},400);
   const res=await github(session.token,'repos/'+REPO+'/contents/blog/'+slug+'/index.html?ref='+BRANCH);
   if(!res.ok)return json({error:'Cannot load article',status:res.status},res.status===404?404:502);
-  const data=await res.json();return json({slug,sha:data.sha,content:dec.decode(unbase64(data.content.replace(/\s/g,'')))});
+  const data=await res.json();
+  if(typeof data.content!=='string'||!data.sha)return json({error:'GitHub did not return article content'},502);
+  try {
+   const encoded=data.content.replace(/\s/g,'');
+   const parts=[];
+   for(let i=0;i<encoded.length;i+=32768)parts.push(atob(encoded.slice(i,i+32768)));
+   const content=parts.join('');
+   const bytes=new Uint8Array(content.length);
+   for(let i=0;i<content.length;i++)bytes[i]=content.charCodeAt(i);
+   return json({slug,sha:data.sha,content:dec.decode(bytes)});
+  }catch(e){return json({error:'Unable to decode article content'},502)}
  }
  if(route==='delete'&&request.method==='POST'){
   if(request.headers.get('origin')!==origin)return json({error:'Invalid request origin'},403);
