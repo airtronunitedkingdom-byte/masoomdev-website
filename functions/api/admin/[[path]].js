@@ -45,6 +45,16 @@ export async function onRequest({request,env}){
   if(!res.ok)return json({error:'Cannot load article',status:res.status},res.status===404?404:502);
   const data=await res.json();return json({slug,sha:data.sha,content:dec.decode(unbase64(data.content.replace(/\s/g,'')))});
  }
+ if(route==='delete'&&request.method==='POST'){
+  if(request.headers.get('origin')!==origin)return json({error:'Invalid request origin'},403);
+  let body;try{body=await request.json()}catch{return json({error:'Invalid JSON'},400)}
+  const slug=body.slug;
+  if(typeof slug!=='string'||!/^[a-z0-9-]{1,90}$/.test(slug)||typeof body.sha!=='string'||!/^[0-9a-f]{40}$/.test(body.sha)||body.confirm!==slug)return json({error:'Invalid deletion confirmation'},400);
+  const path='blog/'+slug+'/index.html';
+  const res=await github(session.token,'repos/'+REPO+'/contents/'+path,{method:'DELETE',headers:{'content-type':'application/json'},body:JSON.stringify({message:'Admin: delete blog/'+slug,sha:body.sha,branch:BRANCH})});
+  const data=await res.json();if(!res.ok)return json({error:data.message||'Deletion failed',status:res.status},res.status===404?404:res.status===409?409:502);
+  return json({ok:true,commit:data.commit?.sha,slug});
+ }
  if(route==='publish'&&request.method==='POST'){
   if(request.headers.get('origin')!==origin)return json({error:'Invalid request origin'},403);
   if(Number(request.headers.get('content-length')||0)>180000)return json({error:'Article too large'},413);
