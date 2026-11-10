@@ -38,4 +38,10 @@ check('PWA service worker avoids admin and API caching',()=>{
   assert.ok(sw.includes("const VERSION='masoomdev-offline-v9'"));
 });
 check('Universal navigation syntax',()=>execFileSync(process.execPath,['--check',new URL('assets/md-desktop-mobile-nav.js',root).pathname],{stdio:'pipe'}));
+check('Universal header removes duplicate legacy theme controls',()=>{
+  const nav=read('assets/md-desktop-mobile-nav.js');
+  assert.ok(nav.includes('#md2-theme-shared'), 'Legacy shared theme toggle is not removed');
+  assert.ok(nav.includes('#md-theme-toggle'), 'Legacy theme toggle is not removed');
+  assert.ok(nav.includes("const key='md2-theme'"), 'Theme preference key changed unexpectedly');
+});
 console.log('\n'+count+' checks passed'+(process.exitCode?' (some failed)':'')+'.');
