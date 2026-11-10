@@ -99,5 +99,5 @@ function setupDirectoryControls(){
 }
 setupDirectoryControls();
 
-/* Remove legacy injected theme buttons while retaining the single universal control. */const removeLegacy=()=>{document.querySelectorAll('#md2-theme,#md-theme-toggle').forEach(b=>b.remove())};removeLegacy();const observer=new MutationObserver(removeLegacy);observer.observe(document.body,{childList:true,subtree:true});
+/* Remove legacy injected theme buttons while retaining the single universal control. */const removeLegacy=()=>{document.querySelectorAll('#md2-theme,#md2-theme-shared,#md-theme-toggle').forEach(b=>b.remove())};removeLegacy();const observer=new MutationObserver(removeLegacy);observer.observe(document.body,{childList:true,subtree:true});
 }if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init()})();
