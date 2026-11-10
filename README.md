@@ -1,35 +1,58 @@
 # MasoomDev Website
 
-Official developer website for **MasoomDev** — games, puzzles and everyday tools.
+Official MasoomDev website: https://masoomdev.online/
 
-## Run locally (Windows, no Vercel required)
+## Branch workflow
 
-1. Download or clone this repository to your Windows PC.
-2. Install Python 3 if it is not already installed (no Python packages are needed).
-3. Double-click `START-LOCAL.bat`.
-4. Open `http://localhost:3000` if your browser does not open automatically.
-5. Edit and save website files; the local browser automatically refreshes after a change.
-6. Press Ctrl+C in the terminal to stop the preview.
+- `main`: production branch used for Cloudflare deployment. Do not push untested changes here.
+- `local-testing`: development, preview and validation. Merge into `main` only after testing.
 
-The local server binds to `127.0.0.1` only. It serves the existing static site, supports client-side routes, and disables caching for development. Local static pages work without internet; external APIs and remote assets still need connectivity. Local testing does not consume Vercel deployments. Pushing commits to the production-connected branch may still trigger an automatic Vercel deployment, depending on Vercel settings.
+## Website sections
 
-## Deploy to Vercel
+- Home (`/`): product discovery, featured apps, games, tools and Masoom Buddy.
+- Apps (`/apps/`): Android and Windows app pages, downloads and app-specific privacy/terms.
+- Tools (`/tools/`): calculators, text/developer tools, image tools and PDF/file utilities.
+- Games (`/games/`): browser games, mini-games and individual game pages.
+- Extensions (`/extensions/`): Chrome extension listings and GitHub ZIP downloads.
+- Blog (`/blog/`): technology tutorials and tool guides.
+- SEO Tools (`/seo-tools/`): metadata, keyword, robots and sitemap helpers.
+- Admin (`/admin/`): GitHub OAuth-based blog management.
+- Legal/support: `/privacy/`, `/terms/`, `/support/`, `/data-deletion/`.
 
-1. In Vercel choose **Add New → Project**.
-2. Import GitHub repository `airtronunitedkingdom-byte/masoomdev-website`.
-3. Framework preset: **Other**. Root directory: repository root. No build command is needed.
-4. Deploy. `vercel.json` handles client-side routes.
+## Run locally (Windows)
 
-## Add published apps
+1. Clone/download the repository and check out `local-testing`.
+2. Install Python 3.
+3. Run `START-LOCAL.bat`.
+4. Open http://localhost:3000 if the browser does not open automatically.
+5. Edit files and test in the browser. Stop the server with Ctrl+C.
 
-Edit the `APPS` array near the end of `index.html`. Each app can have `slug`, `name`, `category`, `icon`, `description`, `playUrl`, and a `privacy` object. Review the actual released app and all SDKs before publishing its privacy policy. Do not copy the sample values without verifying them.
+The preview binds to `127.0.0.1`. Local HTML tools and cached resources can work offline; remote dependencies still require internet.
 
-App URL: `/apps/your-slug` and privacy policy URL: `/apps/your-slug/privacy`.
+## Cloudflare production deployment
 
-## Important
+This project uses Cloudflare Workers with static assets, not just Cloudflare Pages. Refer to `ADMIN-SETUP.md` for Worker deployment, GitHub OAuth configuration and required secrets.
 
-The website is currently configured with no published apps; sample apps are not shown as real releases. General website privacy text is not a substitute for app-specific disclosures. Verify hosting logs, advertising, analytics, SDK data collection and Google Play Data safety answers before publication.
+Build static assets:
+
+```bash
+python scripts/build-cloudflare-preview.py
+```
+
+Deploy (only after tests and approval):
+
+```bash
+npx wrangler deploy
+```
+
+`wrangler.jsonc` configures `src/worker.js`, which routes `/api/admin/*` to the admin API and other requests to static assets. Check the target Worker and production branch before deploying.
+
+## Validation
+
+Run `node scripts/md2-smoke-test.mjs` for the available static checks. These do not replace manual mobile, desktop, extension download, admin-login and deployment checks.
+
+## Privacy and publication
+
+App privacy policies must accurately reflect each app's actual permissions, SDKs and data practices. Verify advertising, analytics, download URLs and Google Play disclosures before publishing.
 
 Support: airtron68@gmail.com
-
-<!-- Cloudflare production redeploy requested 2026-11-07; no website behavior changed. -->
