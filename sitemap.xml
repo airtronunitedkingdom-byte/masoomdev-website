@@ -1,33 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://masoomdev.online/</loc></url>
   <url><loc>https://masoomdev.online/about/</loc></url>
+  <url><loc>https://masoomdev.online/apps/</loc></url>
+  <url><loc>https://masoomdev.online/apps/dailypilot/</loc></url>
   <url><loc>https://masoomdev.online/apps/easy-authenticator/</loc></url>
   <url><loc>https://masoomdev.online/apps/easy-authenticator/privacy/</loc></url>
   <url><loc>https://masoomdev.online/apps/easy-authenticator/terms/</loc></url>
-  <url><loc>https://masoomdev.online/apps/</loc></url>
+  <url><loc>https://masoomdev.online/apps/macro-recorder/</loc></url>
+  <url><loc>https://masoomdev.online/apps/macro-recorder/privacy/</loc></url>
+  <url><loc>https://masoomdev.online/apps/macro-recorder/terms/</loc></url>
   <url><loc>https://masoomdev.online/apps/mh-player/</loc></url>
   <url><loc>https://masoomdev.online/apps/mh-player/licenses/</loc></url>
   <url><loc>https://masoomdev.online/apps/mh-player/privacy/</loc></url>
   <url><loc>https://masoomdev.online/apps/mh-player/terms/</loc></url>
-  <url><loc>https://masoomdev.online/data-deletion/</loc></url>
-  <url><loc>https://masoomdev.online/</loc></url>
-  <url><loc>https://masoomdev.online/privacy/</loc></url>
-  <url><loc>https://masoomdev.online/support/</loc></url>
-  <url><loc>https://masoomdev.online/terms/</loc></url>
   <url><loc>https://masoomdev.online/apps/snip-extract/</loc></url>
   <url><loc>https://masoomdev.online/apps/snip-extract/about/</loc></url>
   <url><loc>https://masoomdev.online/apps/snip-extract/privacy/</loc></url>
-  <url><loc>https://masoomdev.online/apps/dailypilot/</loc></url>
-  <url><loc>https://masoomdev.online/tools/</loc></url>
-  <url><loc>https://masoomdev.online/games/</loc></url>
-  <url><loc>https://masoomdev.online/seo-tools/</loc></url>
-  <url><loc>https://masoomdev.online/tools/age-calculator/</loc></url>
-  <url><loc>https://masoomdev.online/tools/unit-converter/</loc></url>
-  <url><loc>https://masoomdev.online/tools/loan-calculator/</loc></url>
-  <url><loc>https://masoomdev.online/tools/remove-duplicate-lines/</loc></url>
-  <url><loc>https://masoomdev.online/games/word-scramble/</loc></url>
-  <url><loc>https://masoomdev.online/games/reaction-time/</loc></url>
-  <url><loc>https://masoomdev.online/games/number-guess/</loc></url>
-  <url><loc>https://masoomdev.online/games/math-quiz/</loc></url>
+  <url><loc>https://masoomdev.online/blog/</loc></url>
+  <url><loc>https://masoomdev.online/blog/age-calculator-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/android-background-apps-stopping/</loc></url>
+  <url><loc>https://masoomdev.online/blog/backup-authenticator-codes/</loc></url>
+  <url><loc>https://masoomdev.online/blog/base64-encoding-explained/</loc></url>
+  <url><loc>https://masoomdev.online/blog/base64-tool-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/code-minifier-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/compress-images-without-losing-quality/</loc></url>
+  <url><loc>https://masoomdev.online/blog/create-website-favicon/</loc></url>
+  <url><loc>https://masoomdev.online/blog/developer-tools-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/favicon-generator-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/html-editor-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/html-tools-guides/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-base64-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-color-picker-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-compressor-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-cropper-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-resizer-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-rotator-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/image-tools-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/install-chrome-extensions-manually/</loc></url>
+  <url><loc>https://masoomdev.online/blog/jpg-to-pdf-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/jpg-vs-png-vs-webp/</loc></url>
+  <url><loc>https://masoomdev.online/blog/lightweight-video-players-windows/</loc></url>
+  <url><loc>https://masoomdev.online/blog/loan-calculator-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/make-windows-pc-faster/</loc></url>
+  <url><loc>https://masoomdev.online/blog/markdown-editor-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/merge-pdf-files-safely/</loc></url>
+  <url><loc>https://masoomdev.online/blog/notepad-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/pdf-file-tools-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/pdf-merge-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/pdf-split-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/quick-tools-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/regex-tester-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/remove-duplicate-lines-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/resize-images-for-web-and-marketplaces/</loc></url>
+  <url><loc>https://masoomdev.online/blog/two-factor-authentication-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/unit-converter-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/url-encoder-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/watermark-maker-guide/</loc></url>
+  <url><loc>https://masoomdev.online/blog/zip-creator-guide/</loc></url>
+  <url><loc>https://masoomdev.online/data-deletion/</loc></url>
   <url><loc>https://masoomdev.online/extensions/</loc></url>
+  <url><loc>https://masoomdev.online/games/</loc></url>
+  <url><loc>https://masoomdev.online/games/math-quiz/</loc></url>
+  <url><loc>https://masoomdev.online/games/mini-games/</loc></url>
+  <url><loc>https://masoomdev.online/games/number-guess/</loc></url>
+  <url><loc>https://masoomdev.online/games/reaction-time/</loc></url>
+  <url><loc>https://masoomdev.online/games/snooker/</loc></url>
+  <url><loc>https://masoomdev.online/games/word-scramble/</loc></url>
+  <url><loc>https://masoomdev.online/privacy/</loc></url>
+  <url><loc>https://masoomdev.online/seo-tools/</loc></url>
+  <url><loc>https://masoomdev.online/support/</loc></url>
+  <url><loc>https://masoomdev.online/terms/</loc></url>
+  <url><loc>https://masoomdev.online/tools/</loc></url>
+  <url><loc>https://masoomdev.online/tools/age-calculator/</loc></url>
+  <url><loc>https://masoomdev.online/tools/base64-tool/</loc></url>
+  <url><loc>https://masoomdev.online/tools/code-minifier/</loc></url>
+  <url><loc>https://masoomdev.online/tools/developer-tools/</loc></url>
+  <url><loc>https://masoomdev.online/tools/favicon-generator/</loc></url>
+  <url><loc>https://masoomdev.online/tools/html-editor/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-base64/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-color-picker/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-compressor/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-cropper/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-resizer/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-rotator/</loc></url>
+  <url><loc>https://masoomdev.online/tools/image-tools/</loc></url>
+  <url><loc>https://masoomdev.online/tools/jpg-to-pdf/</loc></url>
+  <url><loc>https://masoomdev.online/tools/loan-calculator/</loc></url>
+  <url><loc>https://masoomdev.online/tools/markdown-editor/</loc></url>
+  <url><loc>https://masoomdev.online/tools/notepad/</loc></url>
+  <url><loc>https://masoomdev.online/tools/pdf-file-tools/</loc></url>
+  <url><loc>https://masoomdev.online/tools/pdf-merge/</loc></url>
+  <url><loc>https://masoomdev.online/tools/pdf-split/</loc></url>
+  <url><loc>https://masoomdev.online/tools/quick-tools/</loc></url>
+  <url><loc>https://masoomdev.online/tools/regex-tester/</loc></url>
+  <url><loc>https://masoomdev.online/tools/remove-duplicate-lines/</loc></url>
+  <url><loc>https://masoomdev.online/tools/unit-converter/</loc></url>
+  <url><loc>https://masoomdev.online/tools/url-encoder/</loc></url>
+  <url><loc>https://masoomdev.online/tools/watermark-maker/</loc></url>
+  <url><loc>https://masoomdev.online/tools/zip-creator/</loc></url>
 </urlset>
