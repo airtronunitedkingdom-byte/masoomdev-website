@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One Keyword Research Toolbox</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f5f3ff', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 dark:bg-slate-900 dark:text-slate-100 bg-slate-50 text-slate-800 transition-colors duration-200 flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-slate-800 dark:bg-slate-800 bg-white border-r border-slate-700 flex flex-col justify-between hidden md:flex">
+        <div>
+            <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+                <h1 class="font-bold text-lg text-brand-500 flex items-center gap-2">
+                    🔑 KeywordBox
+                </h1>
+            </div>
+            <nav class="p-4 space-y-1">
+                <button onclick="switchTab('generator')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition bg-brand-600 text-white" data-target="generator">💡 Long-Tail Generator</button>
+                <button onclick="switchTab('analyzer')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-slate-700/50" data-target="analyzer">📊 Intent & Difficulty</button>
+                <button onclick="switchTab('grouper')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-slate-700/50" data-target="grouper">🗂️ Intent Bucket Sorter</button>
+                <button onclick="switchTab('density')" class="tab-btn w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition hover:bg-slate-700/50" data-target="density">📈 Word Frequency Extractor</button>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-700 flex items-center justify-between text-xs text-slate-400">
+            <span>Client-Side SEO Suite</span>
+            <button onclick="toggleDarkMode()" class="p-2 rounded bg-slate-700 hover:bg-slate-600 text-white">🌙/☀️</button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <!-- Top Mobile Header -->
+        <header class="md:hidden bg-slate-800 border-b border-slate-700 p-4 flex justify-between items-center">
+            <span class="font-bold text-brand-500">🔑 KeywordBox</span>
+            <button onclick="toggleDarkMode()" class="px-3 py-1 rounded bg-slate-700 text-xs">Theme</button>
+        </header>
+
+        <div class="md:hidden px-4 pt-4"><select id="mobile-tab" aria-label="Choose keyword tool" onchange="switchTab(this.value)" class="w-full rounded-lg bg-slate-800 text-white p-3 border border-slate-600"><option value="generator">Long-Tail Generator</option><option value="analyzer">Intent & Difficulty</option><option value="grouper">Intent Bucket Sorter</option><option value="density">Word Frequency</option></select></div><!-- Container for Tabs -->
+        <div class="p-6 max-w-7xl mx-auto w-full flex-1 space-y-6">
+
+            <!-- 1. LONG-TAIL GENERATOR TAB -->
+            <div id="tab-generator" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold">💡 Long-Tail Keyword Idea Generator</h2>
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 max-w-2xl">
+                    <label class="block text-xs text-slate-400">Enter Seed Keyword (e.g., bluetooth headphones)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="seed-input" class="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm" value="wireless mouse">
+                        <button onclick="generateKeywords()" class="px-5 py-2 bg-brand-600 hover:bg-brand-500 rounded text-sm font-semibold">Generate Ideas</button>
+                    </div>
+                </div>
+                <div id="gen-results-section" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center max-w-4xl">
+                        <h3 class="font-bold text-lg" id="gen-count">Generated Keywords</h3>
+                        <button onclick="exportCSV('generator')" class="px-4 py-2 bg-green-600 hover:bg-green-500 rounded text-xs font-semibold">📥 Export CSV</button>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl border border-slate-700 max-w-4xl overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-700/50 text-slate-400 text-xs uppercase">
+                                    <th class="p-3">Keyword Variation</th>
+                                    <th class="p-3">Estimated Intent</th>
+                                    <th class="p-3 text-right">Modifier Type</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gen-table-body" class="divide-y divide-slate-700 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. INTENT & DIFFICULTY ANALYZER TAB -->
+            <div id="tab-analyzer" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-bold">📊 Search Intent & Difficulty Estimator</h2>
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 max-w-2xl">
+                    <label class="block text-xs text-slate-400">Paste Keyword List (One per line)</label>
+                    <textarea id="analyzer-input" class="w-full bg-slate-900 border border-slate-700 rounded p-3 text-sm h-32 resize-none">best wireless mouse for gaming
+buy cheap ergonomic mouse
+how to fix bluetooth mouse lag
+wireless mouse wholesale suppliers</textarea>
+                    <button onclick="analyzeKeywords()" class="w-full py-2 bg-brand-600 hover:bg-brand-500 rounded text-sm font-semibold">Analyze Keywords</button>
+                </div>
+                <div id="analyzer-results" class="space-y-4 hidden max-w-4xl">
+                    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-700/50 text-slate-400 text-xs uppercase">
+                                    <th class="p-3">Keyword</th>
+                                    <th class="p-3">Intent Type</th>
+                                    <th class="p-3">Est. Difficulty</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analyzer-table-body" class="divide-y divide-slate-700 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. INTENT BUCKET SORTER TAB -->
+            <div id="tab-grouper" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-bold">🗂️ Intent Bucket Sorter</h2>
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 max-w-2xl">
+                    <label class="block text-xs text-slate-400">Paste Keywords to Sort</label>
+                    <textarea id="grouper-input" class="w-full bg-slate-900 border border-slate-700 rounded p-3 text-sm h-32 resize-none">best running shoes
+buy nike sneakers online
+how to clean white shoes
+cheap basketball shoes price</textarea>
+                    <button onclick="groupKeywords()" class="w-full py-2 bg-brand-600 hover:bg-brand-500 rounded text-sm font-semibold">Sort Into Buckets</button>
+                </div>
+                <div id="grouper-results" class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl hidden">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h3 class="font-bold text-sm text-green-400">🛒 Transactional (Buy)</h3>
+                        <ul id="bucket-transactional" class="text-xs space-y-1 text-slate-300"></ul>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h3 class="font-bold text-sm text-blue-400">⭐ Commercial (Compare/Best)</h3>
+                        <ul id="bucket-commercial" class="text-xs space-y-1 text-slate-300"></ul>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
+                        <h3 class="font-bold text-sm text-amber-400">❓ Informational (How/What)</h3>
+                        <ul id="bucket-informational" class="text-xs space-y-1 text-slate-300"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. WORD FREQUENCY EXTRACTOR TAB -->
+            <div id="tab-density" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-bold">📈 Word Frequency & Content Analyzer</h2>
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 max-w-2xl">
+                    <label class="block text-xs text-slate-400">Paste Content or Keyword Corpus</label>
+                    <textarea id="density-input" class="w-full bg-slate-900 border border-slate-700 rounded p-3 text-sm h-32 resize-none">wireless mouse wireless keyboard ergonomic mouse gaming mouse wireless setup</textarea>
+                    <button onclick="extractFrequency()" class="w-full py-2 bg-brand-600 hover:bg-brand-500 rounded text-sm font-semibold">Extract Word Frequency</button>
+                </div>
+                <div id="density-results" class="space-y-4 hidden max-w-2xl">
+                    <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-700/50 text-slate-400 text-xs uppercase">
+                                    <th class="p-3">Word / Term</th>
+                                    <th class="p-3 text-right">Frequency Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="density-table-body" class="divide-y divide-slate-700 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        let lastGeneratedData = [];
+        const escapeHTML = value => String(value).replace(/[&<>]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[ch]));
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-brand-600', 'text-white');
+                el.classList.add('hover:bg-slate-700/50');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const mobileTab = document.getElementById("mobile-tab"); if(mobileTab) mobileTab.value = tabId;
+            const activeBtn = document.querySelector(`[data-target="${tabId}"]`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-brand-600', 'text-white');
+                activeBtn.classList.remove('hover:bg-slate-700/50');
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // 1. Long-Tail Generator
+        function generateKeywords() {
+            const seed = document.getElementById('seed-input').value.trim().toLowerCase();
+            if(!seed) return;
+
+            const modifiers = [
+                {prefix: 'best ', intent: 'Commercial', type: 'Review'},
+                {prefix: 'cheap ', intent: 'Transactional', type: 'Price'},
+                {prefix: 'buy ', intent: 'Transactional', type: 'Action'},
+                {prefix: 'how to use ', intent: 'Informational', type: 'Guide'},
+                {prefix: 'wireless ', intent: 'Commercial', type: 'Feature'},
+                {prefix: 'top rated ', intent: 'Commercial', type: 'Review'},
+                {suffix: ' for gaming', intent: 'Commercial', type: 'Niche'},
+                {suffix: ' price 2026', intent: 'Transactional', type: 'Price'},
+                {suffix: ' review', intent: 'Commercial', type: 'Review'},
+                {suffix: ' alternative', intent: 'Commercial', type: 'Comparison'}
+            ];
+
+            lastGeneratedData = [];
+            modifiers.forEach(mod => {
+                const kw = (mod.prefix || '') + seed + (mod.suffix || '');
+                lastGeneratedData.push({ keyword: kw, intent: mod.intent, type: mod.type });
+            });
+
+            const tbody = document.getElementById('gen-table-body');
+            tbody.innerHTML = lastGeneratedData.map(item => `
+                <tr class="hover:bg-slate-700/30">
+                    <td class="p-3 font-medium">${escapeHTML(item.keyword)}</td>
+                    <td class="p-3 text-slate-300">${item.intent}</td>
+                    <td class="p-3 text-right text-xs text-brand-400 font-mono">${item.type}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('gen-count').innerText = `Generated ${lastGeneratedData.length} Keyword Ideas`;
+            document.getElementById('gen-results-section').classList.remove('hidden');
+        }
+
+        // 2. Intent & Difficulty Estimator
+        function analyzeKeywords() {
+            const lines = document.getElementById('analyzer-input').value.split('\n').map(l => l.trim()).filter(Boolean);
+            const tbody = document.getElementById('analyzer-table-body');
+
+            tbody.innerHTML = lines.map(kw => {
+                let intent = 'Informational';
+                let diff = 'Easy (15-30)';
+                const lower = kw.toLowerCase();
+                if(lower.includes('buy') || lower.includes('cheap') || lower.includes('price')) {
+                    intent = 'Transactional';
+                    diff = 'Hard (60-85)';
+                } else if(lower.includes('best') || lower.includes('review') || lower.includes('vs')) {
+                    intent = 'Commercial';
+                    diff = 'Medium (35-55)';
+                }
+                return `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="p-3 font-medium">${escapeHTML(kw)}</td>
+                        <td class="p-3 text-slate-300">${intent}</td>
+                        <td class="p-3 font-mono text-xs text-brand-400">${diff}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('analyzer-results').classList.remove('hidden');
+        }
+
+        // 3. Intent Bucket Sorter
+        function groupKeywords() {
+            const lines = document.getElementById('grouper-input').value.split('\n').map(l => l.trim()).filter(Boolean);
+            const transList = [], commList = [], infoList = [];
+
+            lines.forEach(kw => {
+                const lower = kw.toLowerCase();
+                if(lower.includes('buy') || lower.includes('cheap') || lower.includes('order') || lower.includes('price')) {
+                    transList.push(`<li>• ${escapeHTML(kw)}</li>`);
+                } else if(lower.includes('best') || lower.includes('top') || lower.includes('review') || lower.includes('vs')) {
+                    commList.push(`<li>• ${escapeHTML(kw)}</li>`);
+                } else {
+                    infoList.push(`<li>• ${escapeHTML(kw)}</li>`);
+                }
+            });
+
+            document.getElementById('bucket-transactional').innerHTML = transList.join('') || '<li>None</li>';
+            document.getElementById('bucket-commercial').innerHTML = commList.join('') || '<li>None</li>';
+            document.getElementById('bucket-informational').innerHTML = infoList.join('') || '<li>None</li>';
+            document.getElementById('grouper-results').classList.remove('hidden');
+        }
+
+        // 4. Word Frequency Extractor
+        function extractFrequency() {
+            const text = document.getElementById('density-input').value.toLowerCase();
+            const words = text.replace(/[^\w\s]/gi, '').split(/\s+/).filter(w => w.length > 2);
+            
+            const freq = {};
+            words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+
+            const sorted = Object.entries(freq).sort((a,b) => b[1] - a[1]).slice(0, 10);
+            const tbody = document.getElementById('density-table-body');
+
+            tbody.innerHTML = sorted.map(([word, count]) => `
+                <tr class="hover:bg-slate-700/30">
+                    <td class="p-3 font-medium">${escapeHTML(word)}</td>
+                    <td class="p-3 text-right font-mono text-brand-400">${count}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('density-results').classList.remove('hidden');
+        }
+
+        // CSV Export
+        function exportCSV(type) {
+            if(lastGeneratedData.length === 0) return;
+            let csvContent = "data:text/csv;charset=utf-8,Keyword,Intent,ModifierType\n";
+            lastGeneratedData.forEach(row => {
+                csvContent += `"${row.keyword}","${row.intent}","${row.type}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "keyword_research_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+    </script>
+</body>
+</html>
