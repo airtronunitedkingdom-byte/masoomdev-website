@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="Request deletion of your Easy Authenticator account and associated cloud data.">
+  <link rel="canonical" href="https://masoomdev.online/delete-account/">
+  <title>Delete Your Account — Easy Authenticator | MasoomDev</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:#182235;background:#f7f8fc}
+    *{box-sizing:border-box}body{margin:0;line-height:1.65}a{color:#5942bd}header,footer{background:#fff;border-bottom:1px solid #dce2ed}
+    .shell{max-width:900px;margin:auto;padding:20px 24px}.brand{font-weight:850;font-size:21px;text-decoration:none;color:#182235}
+    main{padding-top:56px;padding-bottom:80px}.eyebrow{font-size:12px;letter-spacing:2px;font-weight:800;color:#6748d7}
+    h1{font-size:clamp(34px,6vw,52px);line-height:1.12;letter-spacing:-1.8px;margin:12px 0}
+    h2{font-size:21px;margin:30px 0 8px}p,li{color:#48566e}.panel{background:#fff;border:1px solid #dce2ed;border-radius:18px;padding:26px;margin-top:28px}
+    .notice{background:#f0edff;border-left:4px solid #7654e8;border-radius:8px;padding:14px 18px;color:#33265f;margin:20px 0}
+    .button{display:inline-block;background:#654bd3;color:#fff;text-decoration:none;padding:13px 19px;border-radius:11px;font-weight:750;margin:8px 0}
+    footer{border-top:1px solid #dce2ed;border-bottom:0;color:#647087;font-size:13px}
+    @media(max-width:600px){.panel{padding:19px}main{padding-top:36px}}
+  </style>
+</head>
+<body>
+  <header><div class="shell"><a class="brand" href="/">MasoomDev</a></div></header>
+  <main class="shell">
+    <span class="eyebrow">ACCOUNT &amp; PRIVACY</span>
+    <h1>Delete your Easy Authenticator account</h1>
+    <p>Easy Authenticator provides an in-app cloud-account deletion control for signed-in users. If you cannot access the app or your account, you can submit a request by email using the alternative process below.</p>
+
+    <section class="panel">
+      <h2>Delete from the app</h2><p>If you can sign in, open the app's cloud-account screen and choose its account-deletion control. Review the warning and type <strong>DELETE MY ACCOUNT</strong> to confirm. The app sends the authenticated request to the deletion service. When the service reports success, the cloud account and associated encrypted vault record are deleted. Local authenticator entries and exported backup files are left unchanged.</p>
+      <h2>Request deletion by email</h2>
+      <ol>
+        <li>Send an email from the email address associated with your Easy Authenticator account, or explain if you can no longer access that address.</li>
+        <li>Use the subject line <strong>Easy Authenticator — Account Deletion Request</strong>.</li>
+        <li>In the message, state that you want your Easy Authenticator account deleted. Do not include your password, authenticator PIN, recovery codes, TOTP secret, or backup key.</li>
+        <li>We may contact you to verify account ownership before processing the request. This email route is handled by support and does not itself immediately delete an account.</li>
+      </ol>
+      <a class="button" href="mailto:airtron68@gmail.com?subject=Easy%20Authenticator%20%E2%80%94%20Account%20Deletion%20Request&body=I%20request%20deletion%20of%20my%20Easy%20Authenticator%20account.%0A%0AAccount%20email%3A%20%0A">
+        Email an account deletion request
+      </a>
+      <p><small>Support email: <a href="mailto:airtron68@gmail.com">airtron68@gmail.com</a></small></p>
+    </section>
+
+    <h2>What will be deleted</h2>
+    <p>Successful in-app deletion removes the authenticated Supabase account and its associated encrypted cloud-vault record. The database is configured to remove that vault row when the account is deleted. Information that a service provider must retain for legal, security, fraud-prevention, or dispute-resolution reasons may remain under its applicable policies and obligations.</p>
+
+    <h2>What is not deleted automatically</h2>
+    <p>Deleting your cloud account does not erase copies you have already exported or data stored locally on your device. Before uninstalling the app, remove any local app data and separately delete exported backup files from your device, computer, or cloud storage if you no longer want to keep them.</p>
+
+    <h2>Verification and completion</h2>
+    <p>In-app deletion requires a valid signed-in session and explicit typed confirmation. For email requests, we verify ownership before processing and will communicate by email if clarification is needed. Do not send authentication secrets or recovery material as proof of ownership.</p>
+
+    <h2>Need help?</h2>
+    <p>For questions about this process, contact <a href="mailto:airtron68@gmail.com">airtron68@gmail.com</a>. You can also review our <a href="/privacy/">Privacy Policy</a>.</p>
+    <div class="notice">The email link submits a support request only; it does not delete an account immediately. In-app deletion is a separate flow and is submitted only after you sign in and type the required confirmation phrase.</div>
+  </main>
+  <footer><div class="shell">© 2026 MasoomDev · <a href="/">Home</a> · <a href="/privacy/">Privacy</a> · <a href="/support/">Support</a></div></footer>
+</body>
+</html>
