@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f7ff">
+  <meta name="description" content="Test time-based one-time passwords with a private TOTP authenticator. Save accounts locally and restore them from a passphrase-encrypted backup.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://masoomdev.online/tools/totp-tester/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Free TOTP Tester & Authenticator | MasoomDev">
+  <meta property="og:description" content="Generate live TOTP codes in your browser, autosave accounts locally, and restore them from an encrypted backup.">
+  <meta property="og:url" content="https://masoomdev.online/tools/totp-tester/">
+  <meta name="twitter:card" content="summary">
+  <title>Free TOTP Tester &amp; Authenticator | MasoomDev</title>
+  <link rel="stylesheet" href="/tools/totp-tester/totp-tester.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MasoomDev TOTP Tester",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Any modern browser",
+    "isAccessibleForFree": true,
+    "url": "https://masoomdev.online/tools/totp-tester/",
+    "description": "A browser-based TOTP tester with automatic local saving and passphrase-encrypted backup and restore.",
+    "featureList": ["Live TOTP codes", "Browser-local account storage", "Encrypted backup and restore", "No account required"],
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}
+  }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="MasoomDev home">MasoomDev</a>
+    <nav aria-label="Breadcrumb">
+      <a href="/tools/">HTML Tools</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">TOTP Tester</span>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">PRIVATE BROWSER TOOL</p>
+      <h1 id="page-title">TOTP Tester</h1>
+      <p class="lead">Generate and check time-based one-time passwords (TOTP) from an authenticator secret. Your codes refresh automatically, and your accounts save to this browser.</p>
+    </section>
+
+    <aside class="privacy-note" aria-label="Privacy information">
+      <span class="privacy-mark" aria-hidden="true">LOCAL</span>
+      <div>
+        <strong>Your secrets stay on this device</strong>
+        <p>This tool makes no network requests. Accounts autosave in this browser&apos;s local storage. Local storage is not encrypted, so only use this page on a device and browser profile you trust.</p>
+      </div>
+    </aside>
+
+    <section class="panel" aria-labelledby="add-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">SET UP</p><h2 id="add-heading">Add an authenticator secret</h2></div>
+        <span class="step-number" aria-hidden="true">01</span>
+      </div>
+      <p class="section-copy">Enter a Base32 secret from an account you own. Spaces and hyphens are ignored.</p>
+      <form id="entry-form" novalidate>
+        <div class="field-grid">
+          <label class="field">Service or website
+            <input id="service" name="service" type="text" maxlength="80" autocomplete="off" placeholder="e.g. Example service" required>
+          </label>
+          <label class="field">Account label <span class="optional-label">optional</span>
+            <input id="account" name="account" type="text" maxlength="100" autocomplete="off" placeholder="e.g. name@example.com">
+          </label>
+        </div>
+        <label class="field">Base32 secret
+          <span class="secret-input-wrap">
+            <input id="secret" name="secret" type="password" maxlength="200" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="JBSWY3DPEHPK3PXP" required aria-describedby="secret-help">
+            <button class="visibility-toggle" id="toggle-secret" type="button" aria-pressed="false">Show</button>
+          </span>
+          <span class="field-hint" id="secret-help">The secret is stored locally so codes can keep working after refresh.</span>
+        </label>
+        <details class="advanced-options">
+          <summary>Advanced TOTP settings</summary>
+          <div class="field-grid settings-grid">
+            <label class="field">Algorithm
+              <select id="algorithm" name="algorithm"><option value="SHA-1">SHA-1</option><option value="SHA-256">SHA-256</option><option value="SHA-512">SHA-512</option></select>
+            </label>
+            <label class="field">Code length
+              <select id="digits" name="digits"><option value="6">6 digits</option><option value="8">8 digits</option></select>
+            </label>
+            <label class="field">Refresh period
+              <select id="period" name="period"><option value="30">30 seconds</option><option value="60">60 seconds</option></select>
+            </label>
+          </div>
+        </details>
+        <div class="form-actions">
+          <button class="button button-primary" type="submit">Add account</button>
+          <span class="status" id="entry-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel accounts-panel" aria-labelledby="accounts-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">LIVE CODES</p><h2 id="accounts-heading">Your accounts</h2></div>
+        <span class="account-count" id="account-count">0 accounts</span>
+      </div>
+      <div class="empty-state" id="empty-state">
+        <span class="empty-mark" aria-hidden="true">•••</span>
+        <p>No accounts yet</p>
+        <span>Add a secret above to see its live code here.</span>
+      </div>
+      <div class="account-list" id="account-list"></div>
+      <p class="autosave-status" id="autosave-status" role="status" aria-live="polite">Changes save automatically in this browser.</p>
+    </section>
+
+    <section class="panel backup-panel" aria-labelledby="backup-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">BACKUP &amp; RESTORE</p><h2 id="backup-heading">Keep a private backup</h2></div>
+        <span class="step-number" aria-hidden="true">02</span>
+      </div>
+      <p class="section-copy">Export an encrypted backup before changing devices. Restore merges its accounts with the ones already saved here.</p>
+      <div class="backup-grid">
+        <section class="backup-card" aria-labelledby="export-heading">
+          <h3 id="export-heading">Create encrypted backup</h3>
+          <p>Protect the file with a unique passphrase of at least 12 characters. The backup uses AES-256-GCM encryption.</p>
+          <label class="field">Backup passphrase
+            <input id="backup-passphrase" type="password" autocomplete="new-password" minlength="12" placeholder="At least 12 characters">
+          </label>
+          <label class="field">Confirm passphrase
+            <input id="backup-confirm" type="password" autocomplete="new-password" minlength="12" placeholder="Enter it again">
+          </label>
+          <button class="button button-secondary" id="export-backup" type="button">Download encrypted backup</button>
+        </section>
+        <section class="backup-card" aria-labelledby="restore-heading">
+          <h3 id="restore-heading">Restore a backup</h3>
+          <p>Choose a MasoomDev TOTP backup file and enter the passphrase used to create it.</p>
+          <label class="field">Backup file
+            <input id="backup-file" type="file" accept=".json,.totp-backup,application/json">
+          </label>
+          <label class="field">Backup passphrase
+            <input id="restore-passphrase" type="password" autocomplete="current-password" placeholder="Your backup passphrase">
+          </label>
+          <button class="button button-secondary" id="restore-backup" type="button">Restore and merge accounts</button>
+        </section>
+      </div>
+      <p class="status backup-status" id="backup-status" role="status" aria-live="polite"></p>
+      <p class="security-footnote"><strong>Important:</strong> The backup passphrase cannot be recovered. Keep the encrypted file and passphrase separate. Exporting does not encrypt the secrets stored in this browser.</p>
+    </section>
+
+    <section class="content-section" aria-labelledby="how-heading">
+      <p class="eyebrow">HOW IT WORKS</p>
+      <h2 id="how-heading">Test a time-based one-time password</h2>
+      <p>TOTP is a standard for generating short-lived verification codes from a shared secret and the current time. This free online TOTP tester calculates codes in your browser using the selected algorithm, code length and refresh period. Compare the displayed code with your authenticator setup, and check that your device clock is accurate if a code is rejected.</p>
+      <div class="faq-list">
+        <details><summary>Are my authenticator secrets uploaded?</summary><p>No. Code generation, local autosave, and backup encryption run in your browser. This page does not send your secret or generated codes to a server. Your browser&apos;s local storage is readable by anyone with access to the same browser profile, so use a trusted device.</p></details>
+        <details><summary>How do backup and restore work?</summary><p>The downloaded backup is encrypted with AES-256-GCM using a key derived from your passphrase. Restore decrypts the file in this browser and merges its accounts with local accounts. A lost passphrase cannot be reset.</p></details>
+        <details><summary>Why might a generated code not work?</summary><p>Check that the secret is entered correctly, the selected algorithm, code length and period match the service, and your device time is synchronized automatically. Most services use SHA-1, six digits and a 30-second period.</p></details>
+      </div>
+    </section>
+
+    <p class="bottom-link"><a href="/tools/">Browse all HTML tools</a></p>
+  </main>
+
+  <footer>MasoomDev <span aria-hidden="true">·</span> Free browser tools</footer>
+  <script src="/tools/totp-tester/totp-tester.js" defer></script>
+</body>
+</html>
