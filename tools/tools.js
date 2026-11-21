@@ -1,4 +1,5 @@
 "use strict";
+if (document.getElementById("keys")) {
 const $=id=>document.getElementById(id),num=id=>Number($(id).value)||0;
 document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tool],.tool").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.tool).classList.add("active")});
 let expr="";for(const k of ["C","⌫","(",")","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"]){const b=document.createElement("button");b.textContent=k;b.onclick=()=>{if(k==="C")expr="";else if(k==="⌫")expr=expr.slice(0,-1);else if(k==="="){try{if(!/^[0-9.+*/() -]{1,100}$/.test(expr))throw Error();const t=expr.replace(/\s/g,"").match(/\d+(?:\.\d+)?|[()+*/-]/g)||[];if(t.join("")!==expr.replace(/\s/g,""))throw Error();let i=0;function atom(){if(t[i]==="-"){i++;return -atom()}if(t[i]==="+"){i++;return atom()}if(t[i]==="("){i++;const n=sum();if(t[i++]!==")")throw Error();return n}const s=t[i++];if(!/^\d+(?:\.\d+)?$/.test(s||""))throw Error();return Number(s)}function prod(){let n=atom();while(t[i]==="*"||t[i]==="/"){const op=t[i++],v=atom();n=op==="*"?n*v:n/v}return n}function sum(){let n=prod();while(t[i]==="+"||t[i]==="-"){const op=t[i++],v=prod();n=op==="+"?n+v:n-v}return n}const v=sum();if(i!==t.length||!Number.isFinite(v))throw Error();expr=String(Number(v.toPrecision(12)))}catch{expr="Error"}}else{if(expr==="Error")expr="";expr+=k} $("screen").value=expr||"0"};$("keys").append(b)}
@@ -15,3 +16,4 @@ function caseConvert(type){const t=$("caseInput").value;let result=t;if(type==="
 document.querySelectorAll("[data-case]").forEach(b=>b.onclick=()=>caseConvert(b.dataset.case));
 async function copyValue(id,status){const value=$(id).value;if(!value){$(status).textContent="Nothing to copy.";return}try{await navigator.clipboard.writeText(value);$(status).textContent="Copied to clipboard."}catch{$(status).textContent="Clipboard unavailable; select and copy the text manually."}}
 $("jsonCopy").onclick=()=>copyValue("jsonOutput","jsonStatus");$("caseCopy").onclick=()=>copyValue("caseOutput","caseStatus");
+}
