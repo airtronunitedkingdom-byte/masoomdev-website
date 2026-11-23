@@ -6,7 +6,7 @@ import shutil
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "dist"
 EXCLUDE = {".git", ".github", ".vercel", "dist", "node_modules", "__pycache__", "functions", "src"}
-SKIP_ROOT = {"README.md", "START-LOCAL.bat", "local-preview.py", "vercel.json", "wrangler.toml", "wrangler.jsonc"}
+SKIP_ROOT = {"README.md", "START-LOCAL.bat", "local-preview.py", "vercel.json", "wrangler.toml", "wrangler.jsonc", "package.json", "package-lock.json"}
 if OUT.exists():
     shutil.rmtree(OUT)
 OUT.mkdir()

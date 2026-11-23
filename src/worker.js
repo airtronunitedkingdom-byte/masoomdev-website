@@ -1,8 +1,12 @@
 import { onRequest as adminRequest } from '../functions/api/admin/[[path]].js';
+import { handleDownloadCounts } from './download-counts.js';
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/download-counts') {
+      return handleDownloadCounts(request, env);
+    }
     if (url.pathname === '/api/admin' || url.pathname.startsWith('/api/admin/')) {
       return adminRequest({ request, env, context: ctx });
     }
