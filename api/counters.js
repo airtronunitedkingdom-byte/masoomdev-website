@@ -24,7 +24,7 @@ async function redis(command) {
 
 function getVisitorId(req) {
   const cookie = req.headers.cookie || "";
-  const match = cookie.match(/(?:^|;\\s*)mdv=([a-zA-Z0-9-]{16,80})/);
+  const match = cookie.match(/(?:^|;\s*)mdv=([a-zA-Z0-9-]{16,80})/);
   return match ? match[1] : null;
 }
 
